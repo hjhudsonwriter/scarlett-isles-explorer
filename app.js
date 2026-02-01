@@ -232,7 +232,7 @@ function renderExplorer() {
   `;
 
 
-  const root = view.querySelector(".explorer-wrap");
+  const root = view;
   const mapUpload = root.querySelector("#explorerMapUpload");
   const btnClear = root.querySelector("#explorerClearMap");
   const btnFs = root.querySelector("#explorerFullscreen");
