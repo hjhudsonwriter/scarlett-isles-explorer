@@ -1,4 +1,22 @@
 (() => {
+    // -------------------------------
+  // GitHub Pages base-path helper
+  // -------------------------------
+  const BASE = (() => {
+    const parts = location.pathname.split("/").filter(Boolean);
+    return parts.length ? `/${parts[0]}/` : "/";
+  })();
+
+  function withBase(url) {
+    if (!url) return url;
+    if (
+      url.startsWith("http") ||
+      url.startsWith("data:") ||
+      url.startsWith("blob:")
+    ) return url;
+    if (url.startsWith("/")) return BASE + url.slice(1);
+    return BASE + url;
+  }
   // Campaign Manager used #view — keep it
   const view = document.getElementById("view");
   if (!view) {
@@ -11,7 +29,16 @@
 
   // ---- PASTE EXPLORER CODE BELOW THIS LINE ----
 const EXPLORER_KEY = "scarlettIsles.explorer.v1";
-
+  // -------------------------------
+// Explorer-local hero definitions
+// -------------------------------
+const HEROES = [
+  { id: "kaelen", title: "Kaelen" },
+  { id: "umbrys", title: "Umbrys" },
+  { id: "magnus", title: "Magnus" },
+  { id: "elara", title: "Elara" },
+  { id: "charles", title: "Charles" }
+];
 
 function explorerUid() {
   return Math.random().toString(16).slice(2) + Date.now().toString(16);
@@ -1168,7 +1195,11 @@ tok.axial = newA;
 
 
       // Place token centered on hex center
-      const topLeft = { x: p.x - tok.size/2, y: p.y - tok.size/2 };
+      const centerPx = axialToPixel(newA.q, newA.r);
+const topLeft = {
+  x: centerPx.x - tok.size / 2,
+  y: centerPx.y - tok.size / 2
+};
 
 
       // Clamp to stage bounds
