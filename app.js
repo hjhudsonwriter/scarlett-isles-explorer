@@ -112,13 +112,15 @@ function renderExplorer() {
 
   // Build UI
   view.innerHTML = `
-    <div class="explorer-wrap">
-      <div class="explorer-head">
-        <div>
-          <h1 style="margin:0">Scarlett Isles Explorer</h1>
-          <p class="muted" style="margin:6px 0 0 0">
-            Upload a map, align a hex grid, and drag your heroes around.
-          </p>
+          <div class="explorer-head">
+        <div class="explorer-brand">
+          <img class="explorer-logo" src="assets/logo.png" alt="Scarlett Isles logo" />
+          <div class="explorer-brandText">
+            <h1 class="explorer-title">Scarlett Isles Explorer</h1>
+            <p class="muted explorer-sub">
+              Upload a map, align a hex grid, and drag your heroes around.
+            </p>
+          </div>
         </div>
       </div>
 
