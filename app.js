@@ -1359,4 +1359,8 @@ window.__explorerCleanup = () => {
   tokenLayer.removeEventListener("pointerup", onTokenPointerUp);
 };
 }
+
+// 🔴 ADD THIS LINE
+renderExplorer();
+
 })();
