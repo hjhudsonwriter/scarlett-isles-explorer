@@ -1,10 +1,102 @@
-/* Minimal base */
-html, body {
+/* ================================
+   Scarlett Isles Explorer – Theme Base
+================================== */
+
+:root{
+  /* Palette */
+  --bg0: #07080a;           /* near-black */
+  --bg1: rgba(10,10,14,.72);/* dark glass */
+  --bg2: rgba(30, 8, 14,.72);/* burgundy glass */
+  --scarlet: #8b0f22;
+  --burgundy: #3b0b14;
+  --gold: #d4af37;
+  --gold2: #f3d37a;
+
+  /* Text */
+  --text: rgba(245, 242, 234, .95);
+  --muted: rgba(245, 242, 234, .75);
+
+  /* Lines & shadows */
+  --line: rgba(212,175,55,.28);
+  --shadow: 0 16px 55px rgba(0,0,0,.55);
+
+  --radius: 18px;
+}
+
+html, body{
   margin: 0;
   height: 100%;
-  background: #07080a;
-  color: #e7e3d8;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg0);
+  color: var(--text);
+  font-family: "Cormorant Garamond", serif;
+  overflow-x: hidden;
+}
+
+/* Full-page hero background (your assets/hero.png) */
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(900px 540px at 20% 10%, rgba(212,175,55,.12), transparent 60%),
+    radial-gradient(900px 540px at 80% 20%, rgba(139,15,34,.16), transparent 55%),
+    url("assets/hero.png") center/cover no-repeat;
+  filter: saturate(1.05) contrast(1.05);
+  z-index: -2;
+}
+
+/* Dark vignette so text stays readable */
+body::after{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(0,0,0,.12), rgba(0,0,0,.82) 70%),
+    linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.72));
+  z-index: -1;
+}
+
+/* Typography helpers used in your Explorer markup */
+h1, h2, h3{
+  font-family: "Cinzel", serif;
+  letter-spacing: .04em;
+}
+
+.muted{ color: var(--muted); }
+.hint{ color: rgba(245,242,234,.82); }
+
+/* Buttons used all over the Explorer UI */
+.btn{
+  appearance: none;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(900px 220px at 30% 0%, rgba(139,15,34,.40), rgba(10,10,14,.72));
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: "IM Fell English SC", serif;
+  letter-spacing: .05em;
+  text-transform: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,.35);
+}
+
+.btn:hover{
+  border-color: rgba(212,175,55,.45);
+  box-shadow: 0 14px 32px rgba(0,0,0,.45);
+}
+
+.btn:active{
+  transform: translateY(1px);
+}
+
+.btn.ghost{
+  background: rgba(8,8,10,.45);
+}
+
+.btn:focus{
+  outline: 3px solid rgba(212,175,55,.35);
+  outline-offset: 2px;
 }
 
 /* ================================
