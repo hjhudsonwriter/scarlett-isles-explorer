@@ -1,0 +1,353 @@
+/* Minimal base */
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #07080a;
+  color: #e7e3d8;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+/* ================================
+   Scarlett Isles Explorer (scoped)
+================================== */
+
+.explorer-wrap { max-width: 1200px; margin: 16px auto; }
+.explorer-head { margin-bottom: 12px; }
+
+.explorer-controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(40,48,58,0.9);
+  background: rgba(15,18,22,0.65);
+}
+
+.explorer-divider{
+  width:1px;
+  height:28px;
+  background: rgba(255,255,255,0.12);
+  display:inline-block;
+  margin: 0 6px;
+}
+
+.explorer-group{ display:flex; gap:8px; align-items:center; }
+
+.explorer-opacity{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-width:160px;
+}
+
+.explorer-opacity input[type="range"]{ width: 160px; }
+
+.explorer-stage{
+  margin-top: 14px;
+  position: relative;
+  width: 100%;
+  height: min(72vh, 820px);
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(40,48,58,0.9);
+  background: rgba(0,0,0,0.35);
+}
+
+:fullscreen .explorer-stage{
+  height: 100vh;
+  border-radius: 0;
+}
+
+.explorer-world{
+  position:absolute;
+  inset:0;
+}
+
+.explorer-map{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit: contain;
+  user-select:none;
+  pointer-events:none;
+}
+
+.explorer-grid{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.explorer-tokens{
+  position:absolute;
+  inset:0;
+}
+
+.explorer-token{
+  position:absolute;
+  display:grid;
+  place-items:center;
+  border-radius: 999px;
+  border: 2px solid rgba(201,162,39,0.55);
+  background: rgba(122,15,26,0.55);
+  box-shadow: 0 10px 18px rgba(0,0,0,0.35);
+  color: rgba(231,231,234,0.95);
+  font-weight: 900;
+  user-select:none;
+  touch-action:none;
+  cursor: grab;
+}
+
+.explorer-token:active { cursor: grabbing; }
+
+.explorer-token.isSelected{
+  outline: 3px solid rgba(201,162,39,0.65);
+  outline-offset: 2px;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.35), 0 0 0 6px rgba(201,162,39,0.12);
+}
+
+.explorer-token span{
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+
+.explorer-marquee{
+  position:absolute;
+  border: 1px solid rgba(201,162,39,0.65);
+  background: rgba(201,162,39,0.12);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.35);
+  border-radius: 10px;
+  pointer-events:none;
+}
+/* Fullscreen wrapper: controls stay visible */
+.explorer-fswrap{
+  position: relative;
+}
+
+/* When the wrapper is fullscreen, pin controls at top as an overlay */
+.explorer-fswrap:fullscreen{
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.85);
+}
+
+/* Make stage fill the remaining space */
+.explorer-fswrap:fullscreen .explorer-stage{
+  height: 100vh;
+  border-radius: 0;
+  margin-top: 0;
+}
+
+/* Controls become a fixed overlay bar */
+.explorer-fswrap:fullscreen .explorer-controls{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  z-index: 50;
+  border-radius: 18px;
+  background: rgba(10,12,16,0.72);
+  backdrop-filter: blur(10px);
+}
+
+/* Optional: make controls scroll horizontally if your screen is small */
+.explorer-fswrap:fullscreen .explorer-controls{
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Make sure tokens and marquee still sit above map/grid */
+.explorer-fswrap:fullscreen .explorer-tokens{ z-index: 20; }
+.explorer-fswrap:fullscreen .explorer-marquee{ z-index: 30; }
+
+/* Hide UI mode (fullscreen): collapse controls into a small pill */
+/* Hide UI mode (fullscreen): collapse controls into a small pill */
+.explorer-fswrap.uiHidden:fullscreen .explorer-controls{
+  left: 10px;
+  right: auto;
+  width: auto;
+  max-width: calc(100vw - 20px);
+
+  padding: 8px;
+  gap: 8px;
+
+  border-radius: 999px;
+  z-index: 60;
+}
+
+/* In hidden mode, hide EVERYTHING except the Hide/Show button */
+.explorer-fswrap.uiHidden:fullscreen .explorer-controls > *{
+  display: none !important;
+}
+
+.explorer-fswrap.uiHidden:fullscreen #explorerHideUi{
+  display: inline-flex !important;
+}
+/* Travel panel (bottom) */
+.explorer-travel{
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(40,48,58,0.9);
+  background: rgba(15,18,22,0.65);
+}
+
+.explorer-travelRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.explorer-travelLine{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap: wrap;
+}
+
+.explorer-travelRight{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.tiny{ font-size: 12px; }
+
+/* In fullscreen: pin travel panel to bottom like a HUD */
+.explorer-fswrap:fullscreen .explorer-travel{
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 55;
+  margin-top: 0;
+  background: rgba(10,12,16,0.75);
+  backdrop-filter: blur(10px);
+}
+
+/* If UI is hidden, keep travel panel visible (still shows Make Camp + info) */
+.explorer-fswrap.uiHidden:fullscreen .explorer-travel{
+  display: block !important;
+}
+.explorer-milesList{
+  margin-top:8px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.milesPill{
+  border:1px solid var(--border);
+  background: rgba(18,22,27,.65);
+  color: var(--text);
+  border-radius:999px;
+  padding:6px 10px;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.milesPill strong{ margin-left:6px; }
+
+.milesPill.isFocus{
+  outline:2px solid rgba(200,160,60,.55);
+}
+
+.milesPill.isDone{
+  opacity:.7;
+}
+/* Bastion Warehouse: keep the panel tidy */
+.warehouseCard { overflow: hidden; }
+.warehouseCard table { width: 100%; table-layout: fixed; }
+.warehouseCard th, .warehouseCard td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.warehouseCard .tableWrap {
+  max-height: 520px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+/* Compact Bastion facility cards */
+#bm_facilities{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+
+.facMini{
+  border: 2px solid rgba(212, 175, 55, 0.55);
+  border-radius: 20px;
+  padding: 14px;
+  background: radial-gradient(1200px 400px at 20% 0%, rgba(140, 0, 0, 0.22), transparent 55%),
+              rgba(10, 11, 14, 0.82);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+.facMini_top{
+  display:flex;
+  gap: 12px;
+  align-items:center;
+}
+
+.facMini_img{
+  width: 74px;
+  height: 74px;
+  border-radius: 999px;
+  border: 2px solid rgba(212,175,55,.75);
+  object-fit: cover;
+  background: rgba(0,0,0,.35);
+}
+
+.facMini_meta{ flex: 1; min-width: 0; }
+.facMini_name{
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+.facMini_desc{
+  font-size: 14px;
+  opacity: .9;
+  margin-top: 4px;
+}
+
+.facMini_level{
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+  align-items:flex-end;
+}
+
+.facMini_level select{
+  min-width: 110px;
+}
+
+.facMini_bottom{
+  display:flex;
+  gap: 12px;
+  margin-top: 12px;
+  align-items:flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.facMini_drop{ flex: 1; min-width: 200px; }
+.facMini_drop select{ width: 100%; }
+
+.facMini_actions{
+  display:flex;
+  gap: 10px;
+}
+
+.bm_defBtn{
+  border: 2px solid rgba(212,175,55,.55);
+  background: radial-gradient(600px 120px at 30% 0%, rgba(170, 0, 0, 0.45), rgba(40,10,10,.65));
+  color: #f3d37a;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
