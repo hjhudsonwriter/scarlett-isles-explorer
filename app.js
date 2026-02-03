@@ -1,3 +1,4 @@
+// safety checkpoint
 (() => {
     // -------------------------------
   // GitHub Pages base-path helper
