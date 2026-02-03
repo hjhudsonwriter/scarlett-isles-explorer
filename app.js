@@ -30,6 +30,148 @@
 
   // ---- PASTE EXPLORER CODE BELOW THIS LINE ----
 const EXPLORER_KEY = "scarlettIsles.explorer.v1";
+    // -------------------------------
+// Atlas paging (multi-map regions)
+// -------------------------------
+
+// MASTER SWITCH: set to false to disable the whole feature instantly
+const ATLAS_ENABLED = true;
+
+// How close to the edge counts as "leaving the map" (in normalized coords)
+const EDGE_THRESHOLD = 0.02;
+
+// Which maps exist and how they connect.
+// 1) Give each map a unique id (e.g. "nightwood_1").
+// 2) src is the file path in your repo.
+// 3) links: which map is north/south/east/west of this one (or null if none).
+const ATLAS = {
+  // Starting map when the Explorer loads
+  startMapId: "midland_province",
+
+  maps: {
+
+    // ─────────────────────────────
+    // EASTERN PROVINCE (north/south)
+    // ─────────────────────────────
+    "eastern_province_south": {
+      src: "assets/maps/eastern_province_south.jpg",
+      links: {
+        n: "eastern_province_north",
+        e: "the_east_isle",
+        s: "southern_province_east",
+        w: null
+      }
+    },
+
+    "eastern_province_north": {
+      src: "assets/maps/eastern_province_north.jpg",
+      links: {
+        s: "eastern_province_south",
+        n: null,
+        e: null,
+        w: null
+      }
+    },
+
+    // ─────────────────────────────
+    // MIDLAND (central hub)
+    // ─────────────────────────────
+    "midland_province": {
+      src: "assets/maps/midland_province.jpg",
+      links: {
+        n: "northern_province_west",
+        s: "southern_province_west",
+        e: "southern_province_east",
+        w: null
+      }
+    },
+
+    // ─────────────────────────────
+    // NORTHERN PROVINCE (east/west)
+    // ─────────────────────────────
+    "northern_province_west": {
+      src: "assets/maps/northern_province_west.jpg",
+      links: {
+        e: "northern_province_east",
+        s: "midland_province",
+        n: null,
+        w: null
+      }
+    },
+
+    "northern_province_east": {
+      src: "assets/maps/northern_province_east.jpg",
+      links: {
+        w: "northern_province_west",
+        e: "the_north_isle",
+        n: null,
+        s: null
+      }
+    },
+
+    // ─────────────────────────────
+    // SOUTHERN PROVINCE (east/west)
+    // ─────────────────────────────
+    "southern_province_west": {
+      src: "assets/maps/southern_province_west.jpg",
+      links: {
+        e: "southern_province_east",
+        n: "midland_province",
+        w: "western_province_south",
+        s: null
+      }
+    },
+
+    "southern_province_east": {
+      src: "assets/maps/southern_province_east.jpg",
+      links: {
+        w: "southern_province_west",
+        n: "midland_province",
+        e: "eastern_province_south",
+        s: null
+      }
+    },
+
+    // ─────────────────────────────
+    // ISLES
+    // ─────────────────────────────
+    "the_east_isle": {
+      src: "assets/maps/the_east_isle.jpg",
+      links: {
+        w: "eastern_province_south",
+        n: null,
+        s: null,
+        e: null
+      }
+    },
+
+    "the_north_isle": {
+      src: "assets/maps/the_north_isle.jpg",
+      links: {
+        w: "northern_province_east",
+        n: null,
+        s: null,
+        e: null
+      }
+    },
+
+    // ─────────────────────────────
+    // WESTERN PROVINCE
+    // ─────────────────────────────
+    "western_province_south": {
+      src: "assets/maps/western_province_south.jpg",
+      links: {
+        e: "southern_province_west",
+        w: null,
+        n: null,
+        s: null
+      }
+    }
+
+  }
+};
+
+
   // -------------------------------
 // Explorer-local hero definitions
 // -------------------------------
@@ -75,6 +217,7 @@ function explorerDefaultState() {
 
 
   return {
+        mapId: ATLAS.startMapId || null,
     mapDataUrl: null,
 
 
@@ -289,7 +432,8 @@ stage.style.touchAction = "none";
   const state = explorerDefaultState();
 
 
-  if (typeof saved.mapDataUrl === "string") state.mapDataUrl = saved.mapDataUrl;
+    if (typeof saved.mapId === "string") state.mapId = saved.mapId;
+    if (typeof saved.mapDataUrl === "string") state.mapDataUrl = saved.mapDataUrl;
   if (saved.grid) state.grid = { ...state.grid, ...saved.grid };
   if (saved.snap) state.snap = { ...state.snap, ...saved.snap };
 if (saved.travel) state.travel = { ...state.travel, ...saved.travel };
@@ -325,7 +469,8 @@ if (saved.travel) state.travel = { ...state.travel, ...saved.travel };
 
 
   function saveNow() {
-    explorerSave({
+        explorerSave({
+  mapId: state.mapId,
   mapDataUrl: state.mapDataUrl,
   snap: state.snap,
   travel: state.travel,
@@ -691,8 +836,15 @@ if (state.snap.enabled) {
 
   function rerenderAll() {
     // Map
+        // Map source priority:
+    // 1) Manual upload (mapDataUrl)
+    // 2) Atlas preset (mapId -> ATLAS.maps[mapId].src)
+    // 3) Nothing
     if (state.mapDataUrl) {
       mapImg.src = state.mapDataUrl;
+      mapImg.style.display = "block";
+    } else if (ATLAS_ENABLED && state.mapId && ATLAS.maps[state.mapId]) {
+      mapImg.src = withBase(ATLAS.maps[state.mapId].src);
       mapImg.style.display = "block";
     } else {
       mapImg.removeAttribute("src");
@@ -1302,6 +1454,62 @@ const topLeft = {
 
 
         setNotice("Too far. One or more heroes would exceed 30 miles. Make Camp to reset.");
+            // -------------------------------
+  // Atlas edge transition (auto paging)
+  // -------------------------------
+  function tryAtlasEdgeTransition() {
+    if (!ATLAS_ENABLED) return false;
+    if (!state.mapId) return false;
+    const mapDef = ATLAS.maps[state.mapId];
+    if (!mapDef || !mapDef.links) return false;
+
+    // Use the anchor token (the one you grabbed)
+    const anchorTok = getTokenById(drag?.anchorId);
+    if (!anchorTok) return false;
+
+    // Normalized coords (0..1)
+    const nx = Number(anchorTok.x);
+    const ny = Number(anchorTok.y);
+
+    let dir = null;
+    if (ny <= EDGE_THRESHOLD) dir = "n";
+    else if (ny >= 1 - EDGE_THRESHOLD) dir = "s";
+    else if (nx <= EDGE_THRESHOLD) dir = "w";
+    else if (nx >= 1 - EDGE_THRESHOLD) dir = "e";
+
+    if (!dir) return false;
+
+    const nextId = mapDef.links[dir];
+    if (!nextId || !ATLAS.maps[nextId]) return false;
+
+    // Move ALL selected tokens (or if nothing selected, move everyone)
+    const idsToMove = selected.size ? Array.from(selected) : state.tokens.map(t => t.id);
+
+    // New positions: opposite edge, keep the other axis
+    state.tokens.forEach(t => {
+      if (!idsToMove.includes(t.id)) return;
+
+      if (dir === "n") {
+        t.y = 1 - EDGE_THRESHOLD * 2; // appear near bottom
+      } else if (dir === "s") {
+        t.y = EDGE_THRESHOLD * 2;     // appear near top
+      } else if (dir === "w") {
+        t.x = 1 - EDGE_THRESHOLD * 2; // appear near right
+      } else if (dir === "e") {
+        t.x = EDGE_THRESHOLD * 2;     // appear near left
+      }
+
+      // If snap mode is on, clear axial so it recalculates cleanly on the new map
+      t.axial = null;
+    });
+
+    // Switch the map
+    state.mapId = nextId;
+    setNotice(`Moved to ${nextId}`);
+    return true;
+  }
+
+  try { tryAtlasEdgeTransition(); } catch {}
         drag = null;
         rerenderAll();
         return;
