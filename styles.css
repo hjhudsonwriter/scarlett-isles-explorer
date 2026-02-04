@@ -338,20 +338,41 @@ h1, h2, h3{
 }
 
 .tiny{ font-size: 12px; }
+/* Readability boost (Explorer Travel HUD) */
+#explorerTravel .tiny{ font-size: 15px; }
+#explorerTravel #explorerMode{ font-size: 15px; }
+#explorerTravel #explorerEffects{ font-size: 15px; font-weight: 700; }
+#explorerTravel #explorerNotice{
+  font-size: 16px;
+  font-weight: 800;
+  opacity: 1 !important;
+}
+#explorerTravel #explorerDayLabel{ font-size: 18px; }
+#explorerTravel #explorerMilesUsed,
+#explorerTravel #explorerMilesLeft{ font-size: 18px; }
 
 /* In fullscreen: keep Travel panel as a larger bottom-left HUD (not a long bar) */
-.explorer-fswrap:fullscreen .explorer-travel{
+/* LEFT BOX: the info line (bigger + wraps so notices are readable) */
+.explorer-fswrap:fullscreen .explorer-travelLine{
   position: absolute;
-  left: 10px;
-  bottom: 10px;
-  z-index: 55;
-  margin-top: 0;
+  left: 0;
+  bottom: 0;
 
-  width: min(720px, calc(100vw - 20px));
+  padding: 14px 16px;
   border-radius: 18px;
   border: 1px solid rgba(40,48,58,0.9);
-  background: rgba(10,12,16,0.78);
+  background: rgba(10,12,16,0.82);
   backdrop-filter: blur(10px);
+
+  /* Readability */
+  font-size: 15px;
+  line-height: 1.25;
+
+  /* Allow wrapping (no truncation) */
+  max-width: calc(100vw - 260px);
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 /* Let the row layout behave normally again */
@@ -394,9 +415,9 @@ h1, h2, h3{
   background: rgba(18,22,27,.65);
   color: var(--text);
   border-radius:999px;
-  padding:6px 10px;
+  padding:10px 14px;
+  font-size:15px;
   cursor:pointer;
-  font-size:12px;
 }
 
 .milesPill strong{ margin-left:6px; }
