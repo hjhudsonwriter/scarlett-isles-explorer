@@ -429,6 +429,92 @@ h1, h2, h3{
 .milesPill.isDone{
   opacity:.7;
 }
+/* ================================
+   Explorer Events Modal
+================================== */
+
+.evModal{
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 9999;
+}
+
+.evModal.isOpen{ display: flex; }
+
+.evModal_backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(6px);
+}
+
+.evModal_card{
+  position: relative;
+  width: min(760px, calc(100vw - 28px));
+  max-height: min(78vh, 760px);
+  overflow: auto;
+
+  border-radius: 18px;
+  border: 1px solid rgba(212,175,55,.35);
+  background: linear-gradient(180deg, rgba(20,6,10,.92), rgba(8,8,10,.92));
+  box-shadow: 0 20px 70px rgba(0,0,0,.65);
+  padding: 16px;
+}
+
+.evModal_top{
+  display:flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.evModal_title{
+  margin: 0;
+  font-size: 22px;
+}
+
+.evModal_type{
+  font-size: 12px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(245,242,234,.75);
+}
+
+.evModal_desc{
+  margin: 10px 0;
+  color: rgba(245,242,234,.92);
+  line-height: 1.35;
+}
+
+.evModal_prompt{
+  margin: 10px 0 12px 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(212,175,55,.22);
+  background: rgba(0,0,0,.25);
+}
+
+.evChoices{
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.evChoices .btn{
+  text-align: left;
+  border-radius: 14px;
+  padding: 12px 12px;
+}
+
+.evModal_close{
+  white-space: nowrap;
+}
+
 /* Bastion Warehouse: keep the panel tidy */
 .warehouseCard { overflow: hidden; }
 .warehouseCard table { width: 100%; table-layout: fixed; }
