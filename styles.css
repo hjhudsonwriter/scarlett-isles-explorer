@@ -351,49 +351,57 @@ h1, h2, h3{
 #explorerTravel #explorerMilesUsed,
 #explorerTravel #explorerMilesLeft{ font-size: 18px; }
 
-/* In fullscreen: keep Travel panel as a larger bottom-left HUD (not a long bar) */
-/* LEFT BOX: the info line (bigger + wraps so notices are readable) */
-.explorer-fswrap:fullscreen .explorer-travelLine{
+/* In fullscreen: make Travel panel a bottom-left overlay HUD */
+.explorer-fswrap:fullscreen .explorer-travel{
   position: absolute;
-  left: 0;
-  bottom: 0;
+  left: 10px;
+  bottom: 10px;
+  z-index: 55;
 
+  margin-top: 0;
+  width: min(760px, calc(100vw - 20px));
   padding: 14px 16px;
+
   border-radius: 18px;
   border: 1px solid rgba(40,48,58,0.9);
   background: rgba(10,12,16,0.82);
   backdrop-filter: blur(10px);
+}
 
-  /* Readability */
+/* In fullscreen: stack the row so it doesn’t cramp */
+.explorer-fswrap:fullscreen .explorer-travelRow{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+/* Make the info line wrap nicely (not clipped) */
+.explorer-fswrap:fullscreen .explorer-travelLine{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+
   font-size: 15px;
   line-height: 1.25;
 
-  /* Allow wrapping (no truncation) */
-  max-width: calc(100vw - 260px);
   white-space: normal;
   overflow: visible;
   text-overflow: unset;
+  max-width: 100%;
 }
 
-/* Let the row layout behave normally again */
-.explorer-fswrap:fullscreen .explorer-travelRow{
-  position: static;
-  min-height: unset;
-}
-
-.explorer-fswrap:fullscreen .explorer-travelLine,
+/* Buttons row stays visible and wraps if needed */
 .explorer-fswrap:fullscreen .explorer-travelRight{
-  position: static;
-  max-width: unset;
-  overflow: visible;
-  white-space: normal;
-  padding: 0;
-  border: none;
-  background: transparent;
-  backdrop-filter: none;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-/* SHOW the miles-per-hero pills again in fullscreen */
+/* SHOW miles-per-hero pills in fullscreen */
 .explorer-fswrap:fullscreen .explorer-milesList{
   display: flex;
 }
@@ -402,6 +410,7 @@ h1, h2, h3{
 .explorer-fswrap.uiHidden:fullscreen .explorer-travel{
   display: none !important;
 }
+
 
 .explorer-milesList{
   margin-top:8px;
