@@ -1211,7 +1211,6 @@ btnHideUi?.addEventListener("click", () => {
 // Handy keyboard toggle while fullscreen: press H
 function onKeyToggleUi(e) {
   if (e.key.toLowerCase() !== "h") return;
-  if (!document.fullscreenElement) return;
   if (!fsWrap) return;
   setUiHidden(!fsWrap.classList.contains("uiHidden"));
 }
