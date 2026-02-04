@@ -337,9 +337,10 @@ function renderExplorer() {
 </div>
   </div>
 </div>
-<!-- Events modal -->
+<!-- Events modal (lives INSIDE #explorerFsWrap for fullscreen safety) -->
 <div class="evModal" id="evModal" aria-hidden="true">
   <div class="evModal_backdrop" id="evBackdrop"></div>
+
   <div class="evModal_card" role="dialog" aria-modal="true" aria-labelledby="evTitle">
     <div class="evModal_top">
       <div>
@@ -348,7 +349,15 @@ function renderExplorer() {
       </div>
       <button class="btn ghost evModal_close" id="evClose" type="button">Close</button>
     </div>
+
+    <div class="evModal_desc" id="evDesc">—</div>
+    <div class="evModal_prompt" id="evPrompt" style="display:none;"></div>
+    <div class="evChoices" id="evChoices"></div>
+  </div>
+</div>
+
 </div> <!-- end explorer-fswrap -->
+</div> <!-- end explorer-wrap -->
 
 
     <div class="evModal_desc" id="evDesc">—</div>
@@ -424,7 +433,32 @@ const evChoices = root.querySelector("#evChoices");
   return String(text).replace(/\s*The air carries cold pines, crags, old stone roads, watchposts, buckbear heraldry\.\s*/g, " ").trim();
 }
     
-  function openEventModal(kind, event){
+  function applyOutcome(outcome){
+  if(!outcome) return;
+
+  // Safe state bucket
+  if(!state.trackers || typeof state.trackers !== "object"){
+    state.trackers = { gold: 0, rations: 0, log: [] };
+  }
+  if(!Number.isFinite(state.trackers.gold)) state.trackers.gold = 0;
+  if(!Number.isFinite(state.trackers.rations)) state.trackers.rations = 0;
+  if(!Array.isArray(state.trackers.log)) state.trackers.log = [];
+
+  // Numbers
+  if(Number.isFinite(outcome.gold)) state.trackers.gold += outcome.gold;
+  if(Number.isFinite(outcome.rations)) state.trackers.rations += outcome.rations;
+
+  // Log / note
+  const note = outcome.note ? String(outcome.note) : "";
+  if(note.trim()){
+    const stamp = `Day ${Number(state.travel?.day)||1}`;
+    state.trackers.log.unshift(`${stamp}: ${note.trim()}`);
+  }
+
+  saveNow();
+}
+
+function openEventModal(kind, event){
   if(!evModal) return;
 
   const prov = state.travel?.provinceId || "northern_province";
@@ -432,38 +466,97 @@ const evChoices = root.querySelector("#evChoices");
 
   evMeta.textContent = `${kindLabel} • ${provinceLabel(prov)} • ${event?.type || "—"}`;
   evTitle.textContent = event?.title || "Unknown Event";
-  evDesc.textContent = stripAmbientLine(event?.description || "—");
 
-  if(event?.prompt){
-    evPrompt.style.display = "block";
-    evPrompt.textContent = event.prompt;
-  } else {
+  // ------- NEW: steps support (backwards compatible) -------
+  const hasSteps = Array.isArray(event?.steps) && event.steps.length;
+
+  // Helper to render a single step (new format)
+  function renderStep(stepId){
+    const steps = event.steps;
+    const step = steps.find(s => s.id === stepId) || steps[0];
+
+    evDesc.textContent = stripAmbientLine(step?.text || "—");
+
+    // No separate prompt field in step format (text is the content)
     evPrompt.style.display = "none";
     evPrompt.textContent = "";
-  }
 
-  // choices
-  evChoices.innerHTML = "";
-  const choices = Array.isArray(event?.choices) ? event.choices : [];
-  if(choices.length){
-    choices.forEach((c) => {
+    evChoices.innerHTML = "";
+
+    const choices = Array.isArray(step?.choices) ? step.choices : [];
+    if(!choices.length){
       const b = document.createElement("button");
       b.type = "button";
       b.className = "btn";
-      b.textContent = c;
+      b.textContent = "Continue";
+      b.addEventListener("click", closeEventModal);
+      evChoices.appendChild(b);
+      return;
+    }
+
+    choices.forEach(ch => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn";
+      b.textContent = ch?.label || "Continue";
+
       b.addEventListener("click", () => {
-        setNotice(`Choice made: ${c}`);
+        // next step
+        if(ch && ch.next){
+          renderStep(String(ch.next));
+          return;
+        }
+
+        // outcome ends the event
+        if(ch && ch.outcome){
+          applyOutcome(ch.outcome);
+        }
+
         closeEventModal();
       });
+
       evChoices.appendChild(b);
     });
+  }
+
+  if(hasSteps){
+    // Start at step 0 or "start" if present
+    const startId = event.steps.some(s => s.id === "start") ? "start" : String(event.steps[0].id || "start");
+    renderStep(startId);
   } else {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "btn";
-    b.textContent = "Continue";
-    b.addEventListener("click", closeEventModal);
-    evChoices.appendChild(b);
+    // ------- OLD FORMAT (unchanged) -------
+    evDesc.textContent = stripAmbientLine(event?.description || "—");
+
+    if(event?.prompt){
+      evPrompt.style.display = "block";
+      evPrompt.textContent = event.prompt;
+    } else {
+      evPrompt.style.display = "none";
+      evPrompt.textContent = "";
+    }
+
+    evChoices.innerHTML = "";
+    const choices = Array.isArray(event?.choices) ? event.choices : [];
+    if(choices.length){
+      choices.forEach((c) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "btn";
+        b.textContent = String(c);
+        b.addEventListener("click", () => {
+          setNotice(`Choice made: ${c}`);
+          closeEventModal();
+        });
+        evChoices.appendChild(b);
+      });
+    } else {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn";
+      b.textContent = "Continue";
+      b.addEventListener("click", closeEventModal);
+      evChoices.appendChild(b);
+    }
   }
 
   evModal.classList.add("isOpen");
