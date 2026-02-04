@@ -30,6 +30,45 @@
 
   // ---- PASTE EXPLORER CODE BELOW THIS LINE ----
 const EXPLORER_KEY = "scarlettIsles.explorer.v1";
+    // -------------------------------
+// Explorer Events (data/events.json)
+// -------------------------------
+const EVENTS_URL = withBase("data/events.json");
+
+const PROVINCES = [
+  { id: "northern_province", label: "Northern Province" },
+  { id: "midland_province",  label: "Midland Province" },
+  { id: "eastern_province",  label: "Eastern Province" },
+  { id: "southern_province", label: "Southern Province" },
+  { id: "western_province",  label: "Western Province" },
+  { id: "the_north_isle",    label: "The North Isle" },
+  { id: "the_east_isle",     label: "The East Isle" }
+];
+
+let EVENT_DB = null;
+
+async function loadEventDb(){
+  try{
+    const res = await fetch(EVENTS_URL, { cache: "no-cache" });
+    if(!res.ok) throw new Error(`Failed to load events.json (${res.status})`);
+    const db = await res.json();
+    EVENT_DB = db;
+    return db;
+  }catch(err){
+    console.warn("Events DB failed to load:", err);
+    EVENT_DB = null;
+    return null;
+  }
+}
+
+function provinceLabel(id){
+  return PROVINCES.find(p => p.id === id)?.label || id || "Unknown";
+}
+
+function pickRandom(arr){
+  if(!Array.isArray(arr) || arr.length === 0) return null;
+  return arr[Math.floor(Math.random() * arr.length)];
+}
   // -------------------------------
 // Explorer-local hero definitions
 // -------------------------------
@@ -84,9 +123,16 @@ function explorerDefaultState() {
 
 
     travel: {
-      day: 1,
-      milesUsed: 0
-    },
+  day: 1,
+  milesUsed: 0,
+
+  // NEW: which region we’re currently traveling in
+  provinceId: "northern_province",
+
+  // NEW: travel event rules (max 1 per day)
+  travelEventDay: 0,          // day number we last triggered a travel event
+  nextTravelEventAtMiles: 0   // random mileage threshold for today
+},
 
 
     grid: {
@@ -181,7 +227,14 @@ function renderExplorer() {
         </div>
 
 
-        <span class="hint" id="explorerReadout">Hex: —</span>
+        <div class="explorer-group">
+  <span class="muted tiny">Region</span>
+  <select id="explorerProvince" class="btn ghost" style="padding:8px 10px;border-radius:14px;">
+    ${PROVINCES.map(p => `<option value="${p.id}">${p.label}</option>`).join("")}
+  </select>
+</div>
+
+<span class="hint" id="explorerReadout">Hex: —</span>
       </div>
 
 
@@ -229,6 +282,24 @@ function renderExplorer() {
   </div>
 </div>
 </div> <!-- end explorer-fswrap -->
+<!-- Events modal -->
+<div class="evModal" id="evModal" aria-hidden="true">
+  <div class="evModal_backdrop" id="evBackdrop"></div>
+  <div class="evModal_card" role="dialog" aria-modal="true" aria-labelledby="evTitle">
+    <div class="evModal_top">
+      <div>
+        <div class="evModal_type" id="evMeta">Event</div>
+        <h3 class="evModal_title" id="evTitle">—</h3>
+      </div>
+      <button class="btn ghost evModal_close" id="evClose" type="button">Close</button>
+    </div>
+
+    <div class="evModal_desc" id="evDesc">—</div>
+    <div class="evModal_prompt" id="evPrompt" style="display:none;"></div>
+
+    <div class="evChoices" id="evChoices"></div>
+  </div>
+</div>
 </div> <!-- end explorer-wrap -->
   `;
 
@@ -265,6 +336,73 @@ const btnMakeCamp = root.querySelector("#explorerMakeCamp");
   const btnGridDown = root.querySelector("#explorerGridDown");
   const gridOpacity = root.querySelector("#explorerGridOpacity");
   const readout = root.querySelector("#explorerReadout");
+    const provinceSel = root.querySelector("#explorerProvince");
+
+// Modal elements
+const evModal = root.querySelector("#evModal");
+const evBackdrop = root.querySelector("#evBackdrop");
+const evClose = root.querySelector("#evClose");
+const evMeta = root.querySelector("#evMeta");
+const evTitle = root.querySelector("#evTitle");
+const evDesc = root.querySelector("#evDesc");
+const evPrompt = root.querySelector("#evPrompt");
+const evChoices = root.querySelector("#evChoices");
+
+function openEventModal(kind, event){
+  if(!evModal) return;
+
+  const prov = state.travel?.provinceId || "northern_province";
+  const kindLabel = kind === "camp" ? "Campfire Event" : "Travel Event";
+
+  evMeta.textContent = `${kindLabel} • ${provinceLabel(prov)} • ${event?.type || "—"}`;
+  evTitle.textContent = event?.title || "Unknown Event";
+  evDesc.textContent = event?.description || "—";
+
+  if(event?.prompt){
+    evPrompt.style.display = "block";
+    evPrompt.textContent = event.prompt;
+  } else {
+    evPrompt.style.display = "none";
+    evPrompt.textContent = "";
+  }
+
+  // choices
+  evChoices.innerHTML = "";
+  const choices = Array.isArray(event?.choices) ? event.choices : [];
+  if(choices.length){
+    choices.forEach((c) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn";
+      b.textContent = c;
+      b.addEventListener("click", () => {
+        setNotice(`Choice made: ${c}`);
+        closeEventModal();
+      });
+      evChoices.appendChild(b);
+    });
+  } else {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn";
+    b.textContent = "Continue";
+    b.addEventListener("click", closeEventModal);
+    evChoices.appendChild(b);
+  }
+
+  evModal.classList.add("isOpen");
+  evModal.setAttribute("aria-hidden", "false");
+}
+
+function closeEventModal(){
+  if(!evModal) return;
+  evModal.classList.remove("isOpen");
+  evModal.setAttribute("aria-hidden", "true");
+}
+
+// Close modal
+evClose?.addEventListener("click", closeEventModal);
+evBackdrop?.addEventListener("click", closeEventModal);
 
 
   const btnTokSm = root.querySelector("#explorerTokSm");
@@ -714,7 +852,20 @@ if (state.snap.enabled) {
 
   // Initial render
   rerenderAll();
-  
+  // Load events in the background
+loadEventDb();
+
+// Province dropdown initial value + saving
+if (provinceSel) {
+  provinceSel.value = state.travel?.provinceId || "northern_province";
+
+  provinceSel.addEventListener("change", () => {
+    state.travel.provinceId = provinceSel.value;
+    saveNow();
+    setNotice(`Region set: ${provinceLabel(state.travel.provinceId)}`);
+  });
+}
+
   // ---------- Snap toggle ----------
 function updateSnapButton() {
   btnSnapToggle.textContent = `Snap: ${state.snap.enabled ? "On" : "Off"}`;
@@ -936,12 +1087,24 @@ window.addEventListener("keydown", onKeyToggleUi);
 
   // ---------- Make Camp ----------
 btnMakeCamp.addEventListener("click", () => {
-  state.travel.day = (Number(state.travel.day) || 1) + 1;
+  // CAMPFIRE EVENT
+  const prov = state.travel?.provinceId || "northern_province";
+  const db = EVENT_DB;
 
+  if (db?.provinces?.[prov]?.campfire_events?.length) {
+    const ev = pickRandom(db.provinces[prov].campfire_events);
+    if (ev) openEventModal("camp", ev);
+  }
+
+  // Advance day + reset miles (your existing behaviour)
+  state.travel.day = (Number(state.travel.day) || 1) + 1;
 
   // reset ALL heroes for the new day
   state.tokens.forEach(t => t.milesUsed = 0);
 
+  // Prepare next random travel event threshold for the new day
+  state.travel.nextTravelEventAtMiles = 6 + Math.floor(Math.random() * 19); // 6–24
+  state.travel.travelEventDay = 0; // allow a travel event on the new day
 
   saveNow();
   setNotice("");
@@ -1315,6 +1478,32 @@ const topLeft = {
         tok.milesUsed = (Number(tok.milesUsed) || 0) + milesMoved;
       }
 
+        // TRAVEL EVENT (max once per day)
+const dayNow = Number(state.travel.day) || 1;
+
+// If no threshold exists for today, create one
+if (!state.travel.nextTravelEventAtMiles || state.travel.nextTravelEventAtMiles <= 0) {
+  state.travel.nextTravelEventAtMiles = 6 + Math.floor(Math.random() * 19); // 6–24
+}
+
+// Only trigger once per day
+if (state.travel.travelEventDay !== dayNow) {
+  const anchorNow = getTokenById(drag.anchorId);
+  const milesNow = Number(anchorNow?.milesUsed) || 0;
+
+  if (milesNow >= state.travel.nextTravelEventAtMiles) {
+    const prov = state.travel?.provinceId || "northern_province";
+    const db = EVENT_DB;
+
+    if (db?.provinces?.[prov]?.travel_events?.length) {
+      const ev = pickRandom(db.provinces[prov].travel_events);
+      if (ev) {
+        openEventModal("travel", ev);
+        state.travel.travelEventDay = dayNow; // lock for the day
+      }
+    }
+  }
+}
 
       travelFocusId = anchorTok.id;
 
