@@ -321,8 +321,16 @@ function renderExplorer() {
       <div class="explorer-travelLine tiny">
         <span class="muted">Mode:</span>
         <strong id="explorerMode">—</strong>
+
         <span class="muted">• Effects:</span>
         <span id="explorerEffects">—</span>
+
+        <span class="muted">• Gold:</span>
+        <strong id="explorerGold">0</strong>
+
+        <span class="muted">• Rations:</span>
+        <strong id="explorerRations">0</strong>
+
         <span class="muted">•</span>
         <span id="explorerNotice" class="tiny" style="opacity:.9"></span>
       </div>
@@ -386,6 +394,8 @@ const milesLeftEl = root.querySelector("#explorerMilesLeft");
   const milesListEl = root.querySelector("#explorerMilesList");
 const modeEl = root.querySelector("#explorerMode");
 const effectsEl = root.querySelector("#explorerEffects");
+const goldEl = root.querySelector("#explorerGold");
+const rationsEl = root.querySelector("#explorerRations");
 const noticeEl = root.querySelector("#explorerNotice");
 const btnMakeCamp = root.querySelector("#explorerMakeCamp");
     const btnFreeMove = root.querySelector("#explorerFreeMove");
@@ -455,7 +465,16 @@ const evChoices = root.querySelector("#evChoices");
     state.trackers.log.unshift(`${stamp}: ${note.trim()}`);
   }
 
-  saveNow();
+  // Show a visible outcome summary (so it doesn't feel like nothing happened)
+const parts = [];
+if (Number.isFinite(outcome.gold) && outcome.gold !== 0) parts.push(`${outcome.gold > 0 ? "+" : ""}${outcome.gold} gold`);
+if (Number.isFinite(outcome.rations) && outcome.rations !== 0) parts.push(`${outcome.rations > 0 ? "+" : ""}${outcome.rations} rations`);
+if (outcome.note && String(outcome.note).trim()) parts.push(String(outcome.note).trim());
+
+if (parts.length) {
+  setNotice(`Outcome: ${parts.join(" • ")}`);
+}
+      saveNow();
 }
 
 function openEventModal(kind, event){
@@ -771,6 +790,17 @@ function updateTravelUI() {
   const t = travelModeFromMiles(used);
   if (modeEl) modeEl.textContent = t.mode;
   if (effectsEl) effectsEl.textContent = t.effects;
+    // Trackers (safe defaults)
+if (!state.trackers || typeof state.trackers !== "object") {
+  state.trackers = { gold: 0, rations: 0, log: [] };
+}
+if (!Number.isFinite(state.trackers.gold)) state.trackers.gold = 0;
+if (!Number.isFinite(state.trackers.rations)) state.trackers.rations = 0;
+if (!Array.isArray(state.trackers.log)) state.trackers.log = [];
+
+if (goldEl) goldEl.textContent = String(state.trackers.gold);
+if (rationsEl) rationsEl.textContent = String(state.trackers.rations);
+
 
 
   // Render per-hero list
