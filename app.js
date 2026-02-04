@@ -156,6 +156,7 @@ function explorerDefaultState() {
 
 
   return {
+      freeMove: false,
     // Either a preset map (mapSrc) or an uploaded map (mapDataUrl)
     mapSrc: null,
     mapPresetId: null,
@@ -329,13 +330,13 @@ function renderExplorer() {
     </div>
 
 
-    <div class="explorer-travelRight">
+   <div class="explorer-travelRight">
   <button class="btn ghost" id="explorerResetTravel" type="button">Reset Travel</button>
+  <button class="btn ghost" id="explorerFreeMove" type="button">Free Move: OFF</button>
   <button class="btn" id="explorerMakeCamp" type="button">Make Camp</button>
 </div>
   </div>
 </div>
-</div> <!-- end explorer-fswrap -->
 <!-- Events modal -->
 <div class="evModal" id="evModal" aria-hidden="true">
   <div class="evModal_backdrop" id="evBackdrop"></div>
@@ -347,6 +348,8 @@ function renderExplorer() {
       </div>
       <button class="btn ghost evModal_close" id="evClose" type="button">Close</button>
     </div>
+</div> <!-- end explorer-fswrap -->
+
 
     <div class="evModal_desc" id="evDesc">—</div>
     <div class="evModal_prompt" id="evPrompt" style="display:none;"></div>
@@ -376,6 +379,18 @@ const modeEl = root.querySelector("#explorerMode");
 const effectsEl = root.querySelector("#explorerEffects");
 const noticeEl = root.querySelector("#explorerNotice");
 const btnMakeCamp = root.querySelector("#explorerMakeCamp");
+    const btnFreeMove = root.querySelector("#explorerFreeMove");
+
+function updateFreeMoveUI(){
+  if(!btnFreeMove) return;
+  btnFreeMove.textContent = state.freeMove ? "Free Move: ON" : "Free Move: OFF";
+}
+btnFreeMove?.addEventListener("click", () => {
+  state.freeMove = !state.freeMove;
+  saveNow();
+  updateFreeMoveUI();
+  setNotice(state.freeMove ? "Free Move enabled: miles/events paused." : "Free Move disabled.");
+});
   const btnResetTravel = root.querySelector("#explorerResetTravel");
   function setNotice(msg) {
   if (!noticeEl) return;
@@ -493,6 +508,7 @@ stage.style.touchAction = "none";
   if (typeof saved.mapDataUrl === "string") state.mapDataUrl = saved.mapDataUrl;
   if (saved.grid) state.grid = { ...state.grid, ...saved.grid };
   if (saved.snap) state.snap = { ...state.snap, ...saved.snap };
+    if (typeof saved.freeMove === "boolean") state.freeMove = saved.freeMove;
 if (saved.travel) state.travel = { ...state.travel, ...saved.travel };
 
 
@@ -527,6 +543,7 @@ if (saved.travel) state.travel = { ...state.travel, ...saved.travel };
 
   function saveNow() {
     explorerSave({
+  freeMove: state.freeMove,
   mapSrc: state.mapSrc,
   mapPresetId: state.mapPresetId,
   mapDataUrl: state.mapDataUrl,
@@ -921,6 +938,7 @@ if (state.mapDataUrl) {
 
   // Initial render
   rerenderAll();
+    updateFreeMoveUI();
   // Load events in the background
 loadEventDb();
 
@@ -1415,7 +1433,7 @@ drag.ids.forEach(tokId => {
 
   // If max travel reached, block movement
   const anchor = getTokenById(drag.anchorId);
-if ((Number(anchor?.milesUsed) || 0) >= 30) return;
+if (!state.freeMove && (Number(anchor?.milesUsed) || 0) >= 30) return;
 
 
   const now = stagePointFromEvent(e);
@@ -1533,6 +1551,14 @@ const topLeft = {
 
       const hexesMoved = hexDistance(drag.startAxial, endAx);
       const milesMoved = Math.round(hexesMoved * 6);
+        // FREE MOVE: allow repositioning without miles/events/time changes
+if (state.freeMove) {
+  setNotice("Free Move: repositioned without spending miles.");
+  drag = null;
+  saveNow();
+  rerenderAll();
+  return;
+}
 
 
       const movedIds = Array.isArray(drag?.ids) ? drag.ids : [anchorTok.id];
