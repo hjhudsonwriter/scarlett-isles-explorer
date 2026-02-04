@@ -508,31 +508,48 @@ function openEventModal(kind, event){
       b.type = "button";
       b.className = "btn";
       b.textContent = "Continue";
-      b.addEventListener("click", closeEventModal);
-      evChoices.appendChild(b);
-      return;
-    }
-
-    choices.forEach(ch => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "btn";
-      b.textContent = ch?.label || "Continue";
-
       b.addEventListener("click", () => {
-        // next step
-        if(ch && ch.next){
-          renderStep(String(ch.next));
-          return;
-        }
+  // next step
+  if (ch && ch.next) {
+    renderStep(String(ch.next));
+    return;
+  }
 
-        // outcome ends the event
-        if(ch && ch.outcome){
-          applyOutcome(ch.outcome);
-        }
+  // outcome: apply, then show a readable result screen (do NOT auto-close)
+  if (ch && ch.outcome) {
+    const o = ch.outcome;
 
-        closeEventModal();
-      });
+    applyOutcome(o);
+
+    // Render an "Outcome" view inside the same modal
+    evMeta.textContent = "Outcome";
+    evTitle.textContent = "Result";
+
+    const resultText =
+      (o && o.text) ? String(o.text)
+      : (o && o.note) ? String(o.note)
+      : "The moment passes, leaving only the road ahead.";
+
+    evDesc.textContent = resultText;
+
+    evPrompt.style.display = "none";
+    evPrompt.textContent = "";
+
+    evChoices.innerHTML = "";
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.className = "btn";
+    closeBtn.textContent = "Close";
+    closeBtn.addEventListener("click", closeEventModal);
+    evChoices.appendChild(closeBtn);
+
+    return;
+  }
+
+  // no outcome, no next: just close
+  closeEventModal();
+});
+
 
       evChoices.appendChild(b);
     });
