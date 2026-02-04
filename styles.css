@@ -740,3 +740,9 @@ h1, h2, h3{
   font-size: 17px;
   padding: 12px 16px;
 }
+
+/* Outcome/result text can be longer: keep it comfy to read */
+.evModal_desc{
+  max-height: 56vh;
+  overflow: auto;
+}
