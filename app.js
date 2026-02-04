@@ -34,27 +34,42 @@ const EXPLORER_KEY = "scarlettIsles.explorer.v1";
 // Map presets (loaded from /assets)
 // -------------------------------
 // IMPORTANT: Update file extensions if yours are .jpg instead of .png
+// -------------------------------
+// Map presets (loaded from /assets/maps)
+// Your actual files are .jpg and some provinces are split into multiple maps.
+// -------------------------------
 const MAP_PRESETS = [
-  { id: "northern_province", src: withBase("assets/maps/northern_province.jpg") },
-  { id: "midland_province",  src: withBase("assets/maps/midland_province.jpg") },
-  { id: "eastern_province",  src: withBase("assets/maps/eastern_province.jpg") },
-  { id: "southern_province", src: withBase("assets/maps/southern_province.jpg") },
-  { id: "western_province",  src: withBase("assets/maps/western_province.jpg") },
-  { id: "the_north_isle",    src: withBase("assets/maps/the_north_isle.jpg") },
-  { id: "the_east_isle",     src: withBase("assets/maps/the_east_isle.jpg") }
+  { id: "eastern_province_north",  label: "Eastern Province (North)",  src: withBase("assets/maps/eastern_province_north.jpg") },
+  { id: "eastern_province_south",  label: "Eastern Province (South)",  src: withBase("assets/maps/eastern_province_south.jpg") },
+
+  { id: "midland_province",        label: "Midland Province",          src: withBase("assets/maps/midland_province.jpg") },
+
+  { id: "northern_province_east",  label: "Northern Province (East)",  src: withBase("assets/maps/northern_province_east.jpg") },
+  { id: "northern_province_west",  label: "Northern Province (West)",  src: withBase("assets/maps/northern_province_west.jpg") },
+
+  { id: "southern_province_east",  label: "Southern Province (East)",  src: withBase("assets/maps/southern_province_east.jpg") },
+  { id: "southern_province_west",  label: "Southern Province (West)",  src: withBase("assets/maps/southern_province_west.jpg") },
+
+  { id: "the_east_isle",           label: "The East Isle",             src: withBase("assets/maps/the_east_isle.jpg") },
+  { id: "the_north_isle",          label: "The North Isle",            src: withBase("assets/maps/the_north_isle.jpg") },
+
+  { id: "western_province_south",  label: "Western Province (South)",  src: withBase("assets/maps/western_province_south.jpg") }
 ];
 
 // Map -> Province for event grouping
 function mapIdToProvinceId(mapId){
-  // If you later add split maps like eastern_province_north, they should map to eastern_province
-  if(!mapId) return "northern_province";
-  if(mapId.startsWith("eastern_province")) return "eastern_province";
-  if(mapId.startsWith("northern_province")) return "northern_province";
-  if(mapId.startsWith("southern_province")) return "southern_province";
-  if(mapId.startsWith("western_province")) return "western_province";
-  if(mapId.startsWith("midland_province")) return "midland_province";
-  if(mapId === "the_north_isle") return "the_north_isle";
-  if(mapId === "the_east_isle") return "the_east_isle";
+  // Isles map 1:1
+  if (mapId === "the_north_isle") return "the_north_isle";
+  if (mapId === "the_east_isle")  return "the_east_isle";
+
+  // Split province maps map back to their main event bucket
+  if (mapId.startsWith("northern_province")) return "northern_province";
+  if (mapId.startsWith("midland_province"))  return "midland_province";
+  if (mapId.startsWith("eastern_province"))  return "eastern_province";
+  if (mapId.startsWith("southern_province")) return "southern_province";
+  if (mapId.startsWith("western_province"))  return "western_province";
+
+  // Fallback
   return "northern_province";
 }
     // -------------------------------
@@ -208,7 +223,7 @@ function renderExplorer() {
   <span class="muted tiny">Map</span>
   <select id="explorerMapPreset" class="btn ghost" style="padding:8px 10px;border-radius:14px;">
     <option value="">(choose)</option>
-    ${MAP_PRESETS.map(m => `<option value="${m.id}">${m.id}</option>`).join("")}
+    ${MAP_PRESETS.map(m => `<option value="${m.id}">${m.label}</option>`).join("")}
   </select>
   <button class="btn" id="explorerLoadPreset" type="button">Load</button>
 </div>
