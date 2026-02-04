@@ -474,7 +474,7 @@ if (outcome.note && String(outcome.note).trim()) parts.push(String(outcome.note)
 if (parts.length) {
   setNotice(`Outcome: ${parts.join(" • ")}`);
 }
-      saveNow();
+  saveNow();
 }
 
 function openEventModal(kind, event){
@@ -491,69 +491,82 @@ function openEventModal(kind, event){
 
   // Helper to render a single step (new format)
   function renderStep(stepId){
-    const steps = event.steps;
-    const step = steps.find(s => s.id === stepId) || steps[0];
+  const steps = event.steps;
+  const step = steps.find(s => s.id === stepId) || steps[0];
 
-    evDesc.textContent = stripAmbientLine(step?.text || "—");
+  evDesc.textContent = stripAmbientLine(step?.text || "—");
 
-    // No separate prompt field in step format (text is the content)
-    evPrompt.style.display = "none";
-    evPrompt.textContent = "";
+  // No separate prompt field in step format (text is the content)
+  evPrompt.style.display = "none";
+  evPrompt.textContent = "";
 
-    evChoices.innerHTML = "";
+  evChoices.innerHTML = "";
 
-    const choices = Array.isArray(step?.choices) ? step.choices : [];
-    if(!choices.length){
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "btn";
-      b.textContent = "Continue";
-      b.addEventListener("click", () => {
-  // next step
-  if (ch && ch.next) {
-    renderStep(String(ch.next));
+  const choices = Array.isArray(step?.choices) ? step.choices : [];
+
+  // If a step somehow has no choices, just provide a Close button.
+  if(!choices.length){
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn";
+    b.textContent = "Close";
+    b.addEventListener("click", closeEventModal);
+    evChoices.appendChild(b);
     return;
   }
 
-  // outcome: apply, then show a readable result screen (do NOT auto-close)
-  if (ch && ch.outcome) {
-    const o = ch.outcome;
+  // Normal choices
+  choices.forEach((ch) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn";
+    b.textContent = ch?.label || "Continue";
 
-    applyOutcome(o);
+    b.addEventListener("click", () => {
+      // next step
+      if (ch && ch.next) {
+        renderStep(String(ch.next));
+        return;
+      }
 
-    // Render an "Outcome" view inside the same modal
-    evMeta.textContent = "Outcome";
-    evTitle.textContent = "Result";
+      // outcome: apply, then show a readable result screen (do NOT auto-close)
+      if (ch && ch.outcome) {
+        const o = ch.outcome;
 
-    const resultText =
-      (o && o.text) ? String(o.text)
-      : (o && o.note) ? String(o.note)
-      : "The moment passes, leaving only the road ahead.";
+        applyOutcome(o);
 
-    evDesc.textContent = resultText;
+        // Render an "Outcome" view inside the same modal
+        evMeta.textContent = "Outcome";
+        evTitle.textContent = "Result";
 
-    evPrompt.style.display = "none";
-    evPrompt.textContent = "";
+        const resultText =
+          (o && o.text) ? String(o.text)
+          : (o && o.note) ? String(o.note)
+          : "The moment passes, leaving only the road ahead.";
 
-    evChoices.innerHTML = "";
-    const closeBtn = document.createElement("button");
-    closeBtn.type = "button";
-    closeBtn.className = "btn";
-    closeBtn.textContent = "Close";
-    closeBtn.addEventListener("click", closeEventModal);
-    evChoices.appendChild(closeBtn);
+        evDesc.textContent = resultText;
 
-    return;
-  }
+        evPrompt.style.display = "none";
+        evPrompt.textContent = "";
 
-  // no outcome, no next: just close
-  closeEventModal();
-});
+        evChoices.innerHTML = "";
+        const closeBtn = document.createElement("button");
+        closeBtn.type = "button";
+        closeBtn.className = "btn";
+        closeBtn.textContent = "Close";
+        closeBtn.addEventListener("click", closeEventModal);
+        evChoices.appendChild(closeBtn);
 
+        return;
+      }
 
-      evChoices.appendChild(b);
+      // no outcome, no next: just close
+      closeEventModal();
     });
-  }
+
+    evChoices.appendChild(b);
+  });
+}
 
   if(hasSteps){
     // Start at step 0 or "start" if present
