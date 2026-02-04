@@ -1374,7 +1374,37 @@ btnMakeCamp.addEventListener("click", () => {
   }
 
   // Advance day + reset miles (your existing behaviour)
-  state.travel.day = (Number(state.travel.day) || 1) + 1;
+state.travel.day = (Number(state.travel.day) || 1) + 1;
+
+/* NEW: every 7 days, reset per-player trackers + show bastion prompt */
+if ((Number(state.travel.day) || 1) % 7 === 1) {
+  // ensure trackers exist
+  if (!state.trackers) state.trackers = { gold: 0, rations: 0, log: [] };
+  if (!Number.isFinite(state.trackers.gold)) state.trackers.gold = 0;
+  if (!Number.isFinite(state.trackers.rations)) state.trackers.rations = 0;
+  if (!Array.isArray(state.trackers.log)) state.trackers.log = [];
+
+  // reset weekly (per-player)
+  state.trackers.gold = 0;
+  state.trackers.rations = 0;
+
+  // optional: keep log, or clear it
+  // state.trackers.log = [];
+
+  // show prompt in the same modal style
+  openEventModal("camp", {
+    title: "Bastion Turn",
+    steps: [{
+      id: "start",
+      text: "The Ironbow awaits your orders.",
+      choices: [{
+        label: "Close",
+        outcome: { gold: 0, rations: 0, note: "Bastion turn prompt (weekly).", text: "The Ironbow awaits your orders." }
+      }]
+    }]
+  });
+}
+
 
   // reset ALL heroes for the new day
   state.tokens.forEach(t => t.milesUsed = 0);
