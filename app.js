@@ -31,6 +31,33 @@
   // ---- PASTE EXPLORER CODE BELOW THIS LINE ----
 const EXPLORER_KEY = "scarlettIsles.explorer.v1";
     // -------------------------------
+// Map presets (loaded from /assets)
+// -------------------------------
+// IMPORTANT: Update file extensions if yours are .jpg instead of .png
+const MAP_PRESETS = [
+  { id: "northern_province", src: withBase("assets/maps/northern_province.jpg") },
+  { id: "midland_province",  src: withBase("assets/maps/midland_province.jpg") },
+  { id: "eastern_province",  src: withBase("assets/maps/eastern_province.jpg") },
+  { id: "southern_province", src: withBase("assets/maps/southern_province.jpg") },
+  { id: "western_province",  src: withBase("assets/maps/western_province.jpg") },
+  { id: "the_north_isle",    src: withBase("assets/maps/the_north_isle.jpg") },
+  { id: "the_east_isle",     src: withBase("assets/maps/the_east_isle.jpg") }
+];
+
+// Map -> Province for event grouping
+function mapIdToProvinceId(mapId){
+  // If you later add split maps like eastern_province_north, they should map to eastern_province
+  if(!mapId) return "northern_province";
+  if(mapId.startsWith("eastern_province")) return "eastern_province";
+  if(mapId.startsWith("northern_province")) return "northern_province";
+  if(mapId.startsWith("southern_province")) return "southern_province";
+  if(mapId.startsWith("western_province")) return "western_province";
+  if(mapId.startsWith("midland_province")) return "midland_province";
+  if(mapId === "the_north_isle") return "the_north_isle";
+  if(mapId === "the_east_isle") return "the_east_isle";
+  return "northern_province";
+}
+    // -------------------------------
 // Explorer Events (data/events.json)
 // -------------------------------
 const EVENTS_URL = withBase("data/events.json");
@@ -114,6 +141,9 @@ function explorerDefaultState() {
 
 
   return {
+    // Either a preset map (mapSrc) or an uploaded map (mapDataUrl)
+    mapSrc: null,
+    mapPresetId: null,
     mapDataUrl: null,
 
 
@@ -174,10 +204,19 @@ function renderExplorer() {
 
       <div class="explorer-fswrap" id="explorerFsWrap">
       <div class="explorer-controls">
-        <label class="btn">
-          Upload map
-          <input id="explorerMapUpload" type="file" accept="image/*" hidden />
-        </label>
+        <div class="explorer-group">
+  <span class="muted tiny">Map</span>
+  <select id="explorerMapPreset" class="btn ghost" style="padding:8px 10px;border-radius:14px;">
+    <option value="">(choose)</option>
+    ${MAP_PRESETS.map(m => `<option value="${m.id}">${m.id}</option>`).join("")}
+  </select>
+  <button class="btn" id="explorerLoadPreset" type="button">Load</button>
+</div>
+
+<label class="btn">
+  Upload map
+  <input id="explorerMapUpload" type="file" accept="image/*" hidden />
+</label>
 
 
         <button class="btn ghost" id="explorerClearMap" type="button">Clear map</button>
@@ -306,6 +345,8 @@ function renderExplorer() {
 
   const root = view;
   const mapUpload = root.querySelector("#explorerMapUpload");
+  const mapPresetSel = root.querySelector("#explorerMapPreset");
+  const btnLoadPreset = root.querySelector("#explorerLoadPreset");  
   const btnClear = root.querySelector("#explorerClearMap");
   const btnFs = root.querySelector("#explorerFullscreen");
   const btnHideUi = root.querySelector("#explorerHideUi");
@@ -348,7 +389,12 @@ const evDesc = root.querySelector("#evDesc");
 const evPrompt = root.querySelector("#evPrompt");
 const evChoices = root.querySelector("#evChoices");
 
-function openEventModal(kind, event){
+  function stripAmbientLine(text){
+  if(!text) return text;
+  return String(text).replace(/\s*The air carries cold pines, crags, old stone roads, watchposts, buckbear heraldry\.\s*/g, " ").trim();
+}
+    
+  function openEventModal(kind, event){
   if(!evModal) return;
 
   const prov = state.travel?.provinceId || "northern_province";
@@ -356,7 +402,7 @@ function openEventModal(kind, event){
 
   evMeta.textContent = `${kindLabel} • ${provinceLabel(prov)} • ${event?.type || "—"}`;
   evTitle.textContent = event?.title || "Unknown Event";
-  evDesc.textContent = event?.description || "—";
+  evDesc.textContent = stripAmbientLine(event?.description || "—");
 
   if(event?.prompt){
     evPrompt.style.display = "block";
@@ -427,6 +473,8 @@ stage.style.touchAction = "none";
   const state = explorerDefaultState();
 
 
+  if (typeof saved.mapSrc === "string") state.mapSrc = saved.mapSrc;
+  if (typeof saved.mapPresetId === "string") state.mapPresetId = saved.mapPresetId;
   if (typeof saved.mapDataUrl === "string") state.mapDataUrl = saved.mapDataUrl;
   if (saved.grid) state.grid = { ...state.grid, ...saved.grid };
   if (saved.snap) state.snap = { ...state.snap, ...saved.snap };
@@ -464,6 +512,8 @@ if (saved.travel) state.travel = { ...state.travel, ...saved.travel };
 
   function saveNow() {
     explorerSave({
+  mapSrc: state.mapSrc,
+  mapPresetId: state.mapPresetId,
   mapDataUrl: state.mapDataUrl,
   snap: state.snap,
   travel: state.travel,
@@ -829,13 +879,17 @@ if (state.snap.enabled) {
 
   function rerenderAll() {
     // Map
-    if (state.mapDataUrl) {
-      mapImg.src = state.mapDataUrl;
-      mapImg.style.display = "block";
-    } else {
-      mapImg.removeAttribute("src");
-      mapImg.style.display = "none";
-    }
+    // Map: uploaded map overrides preset map
+if (state.mapDataUrl) {
+  mapImg.src = state.mapDataUrl;
+  mapImg.style.display = "block";
+} else if (state.mapSrc) {
+  mapImg.src = state.mapSrc;
+  mapImg.style.display = "block";
+} else {
+  mapImg.removeAttribute("src");
+  mapImg.style.display = "none";
+}
 
 
     // Grid UI
@@ -933,10 +987,14 @@ btnSnapToggle.addEventListener("click", () => {
 
     const reader = new FileReader();
     reader.onload = () => {
-      state.mapDataUrl = String(reader.result || "");
-      saveNow();
-      rerenderAll();
-    };
+  // Upload overrides preset
+  state.mapDataUrl = String(reader.result || "");
+  state.mapSrc = null;
+  state.mapPresetId = null;
+
+  saveNow();
+  rerenderAll();
+};
     reader.readAsDataURL(file);
   }
 
@@ -945,13 +1003,47 @@ btnSnapToggle.addEventListener("click", () => {
     const ok = confirm("Clear the uploaded map? (Tokens/grid will remain.)");
     if (!ok) return;
     state.mapDataUrl = null;
+    state.mapSrc = null;
+    state.mapPresetId = null;  
     saveNow();
     rerenderAll();
   }
 
 
+  function loadPresetMapById(mapId){
+  const preset = MAP_PRESETS.find(m => m.id === mapId);
+  if(!preset){
+    alert("Preset map not found. Check MAP_PRESETS list in app.js.");
+    return;
+  }
+
+  state.mapPresetId = preset.id;
+  state.mapSrc = preset.src;
+
+  // Clear uploaded map (so preset is used)
+  state.mapDataUrl = null;
+
+  // Auto-set province for events
+  state.travel.provinceId = mapIdToProvinceId(preset.id);
+
+  saveNow();
+  rerenderAll();
+  setNotice(`Map loaded: ${preset.id} • Events: ${state.travel.provinceId}`);
+}
   mapUpload.addEventListener("change", onMapUpload);
   btnClear.addEventListener("click", onClearMap);
+    // Preset dropdown init + Load button
+if(mapPresetSel){
+  mapPresetSel.value = state.mapPresetId || "";
+}
+btnLoadPreset?.addEventListener("click", () => {
+  const id = mapPresetSel?.value;
+  if(!id){
+    alert("Pick a map from the dropdown first.");
+    return;
+  }
+  loadPresetMapById(id);
+});
 
 
   // ---------- Fullscreen ----------
