@@ -2073,6 +2073,171 @@
       ],
       "campfire_events": [
         {
+  "id": "tide_in_the_embers",
+  "title": "Tide in the Embers",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "As the fire burns low, the embers shift like waves breaking against a shore. For a moment, you swear you hear surf — impossibly distant.",
+    "choices": [{
+      "label": "Sit with the sound.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A calm night.",
+        "text": "You let the rhythm settle. Sleep comes easily. You gain 1 ration."
+      }
+    },{
+      "label": "Douse the fire and sleep.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Uneasy rest.",
+        "text": "The sound fades when the fire dies. Sleep comes, but it is shallow."
+      }
+    }]
+  }]
+},
+        {
+  "id": "driftwood_charm",
+  "title": "Driftwood Charm",
+  "type": "Discovery",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone notices a piece of driftwood among the firewood — salt-bleached, carved with spirals that feel oddly deliberate.",
+    "choices": [{
+      "label": "Keep it close.",
+      "outcome": {
+        "gold": 15,
+        "rations": 0,
+        "note": "A lucky find.",
+        "text": "The wood warms in your hand. In the morning, you find coin tucked beneath it. You gain 15 gold."
+      }
+    },{
+      "label": "Burn it.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "The fire burns clean.",
+        "text": "The fire flares bright blue for a heartbeat, then settles. You gain 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "watchful_waters",
+  "title": "Watchful Waters",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Condensation beads on waterskins despite the cold. The water inside shifts, gently, as if breathing.",
+    "choices": [{
+      "label": "Say nothing.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "An unspoken understanding.",
+        "text": "No one mentions it, but everyone notices."
+      }
+    },{
+      "label": "Empty and refill them.",
+      "outcome": {
+        "gold": 0,
+        "rations": -1,
+        "note": "Supplies lost.",
+        "text": "The water spills into the dirt. You lose 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "salt_dream",
+  "title": "Dream of Salt",
+  "type": "Dream",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "That night, one of you dreams of standing ankle-deep in black water, stars reflected below instead of above.",
+    "choices": [{
+      "label": "Share the dream.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A steady morning.",
+        "text": "Talking it through eases the tension. You gain 1 ration."
+      }
+    },{
+      "label": "Keep it private.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Lingering unease.",
+        "text": "The image lingers long after waking."
+      }
+    }]
+  }]
+},
+        {
+  "id": "tide_speaker_memory",
+  "title": "A Tide-Speaker’s Words",
+  "type": "Memory",
+  "tags": ["camp", "rowthorn", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone recalls Maerys Vell’s voice — calm, sharp, warning that the sea remembers what land tries to forget.",
+    "choices": [{
+      "label": "Reflect on her warning.",
+      "outcome": {
+        "gold": 10,
+        "rations": 0,
+        "note": "Perspective gained.",
+        "text": "The thought steadies you. You gain 10 gold from pooled odds and ends."
+      }
+    }]
+  }]
+},
+        {
+  "id": "distant_horizon",
+  "title": "Distant Horizon",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Just before sleep, the horizon seems… closer. Like the world is leaning toward the sea.",
+    "choices": [{
+      "label": "Mark the feeling.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "The world shifts.",
+        "text": "You cannot shake the sense that something is moving."
+      }
+    }]
+  }]
+},
+        {
+  "id": "low_tide_fire",
+  "title": "Low-Tide Fire",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "The fire burns low and wide, spreading like a tidepool rather than climbing. Shadows ripple like water.",
+    "choices": [{
+      "label": "Let it burn out naturally.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A restful night.",
+        "text": "The night passes quietly. You gain 1 ration."
+      }
+    }]
+  }]
+},
+        {
           "id": "stranger_at_the_fire_camp_funnel_2662_v872",
           "title": "Stranger at the Fire (Odd)",
           "type": "Funnel",
@@ -6211,6 +6376,171 @@
         }
       ],
       "campfire_events": [
+        {
+  "id": "tide_in_the_embers",
+  "title": "Tide in the Embers",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "As the fire burns low, the embers shift like waves breaking against a shore. For a moment, you swear you hear surf — impossibly distant.",
+    "choices": [{
+      "label": "Sit with the sound.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A calm night.",
+        "text": "You let the rhythm settle. Sleep comes easily. You gain 1 ration."
+      }
+    },{
+      "label": "Douse the fire and sleep.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Uneasy rest.",
+        "text": "The sound fades when the fire dies. Sleep comes, but it is shallow."
+      }
+    }]
+  }]
+},
+        {
+  "id": "driftwood_charm",
+  "title": "Driftwood Charm",
+  "type": "Discovery",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone notices a piece of driftwood among the firewood — salt-bleached, carved with spirals that feel oddly deliberate.",
+    "choices": [{
+      "label": "Keep it close.",
+      "outcome": {
+        "gold": 15,
+        "rations": 0,
+        "note": "A lucky find.",
+        "text": "The wood warms in your hand. In the morning, you find coin tucked beneath it. You gain 15 gold."
+      }
+    },{
+      "label": "Burn it.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "The fire burns clean.",
+        "text": "The fire flares bright blue for a heartbeat, then settles. You gain 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "watchful_waters",
+  "title": "Watchful Waters",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Condensation beads on waterskins despite the cold. The water inside shifts, gently, as if breathing.",
+    "choices": [{
+      "label": "Say nothing.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "An unspoken understanding.",
+        "text": "No one mentions it, but everyone notices."
+      }
+    },{
+      "label": "Empty and refill them.",
+      "outcome": {
+        "gold": 0,
+        "rations": -1,
+        "note": "Supplies lost.",
+        "text": "The water spills into the dirt. You lose 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "salt_dream",
+  "title": "Dream of Salt",
+  "type": "Dream",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "That night, one of you dreams of standing ankle-deep in black water, stars reflected below instead of above.",
+    "choices": [{
+      "label": "Share the dream.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A steady morning.",
+        "text": "Talking it through eases the tension. You gain 1 ration."
+      }
+    },{
+      "label": "Keep it private.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Lingering unease.",
+        "text": "The image lingers long after waking."
+      }
+    }]
+  }]
+},
+        {
+  "id": "tide_speaker_memory",
+  "title": "A Tide-Speaker’s Words",
+  "type": "Memory",
+  "tags": ["camp", "rowthorn", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone recalls Maerys Vell’s voice — calm, sharp, warning that the sea remembers what land tries to forget.",
+    "choices": [{
+      "label": "Reflect on her warning.",
+      "outcome": {
+        "gold": 10,
+        "rations": 0,
+        "note": "Perspective gained.",
+        "text": "The thought steadies you. You gain 10 gold from pooled odds and ends."
+      }
+    }]
+  }]
+},
+        {
+  "id": "distant_horizon",
+  "title": "Distant Horizon",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Just before sleep, the horizon seems… closer. Like the world is leaning toward the sea.",
+    "choices": [{
+      "label": "Mark the feeling.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "The world shifts.",
+        "text": "You cannot shake the sense that something is moving."
+      }
+    }]
+  }]
+},
+        {
+  "id": "low_tide_fire",
+  "title": "Low-Tide Fire",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "The fire burns low and wide, spreading like a tidepool rather than climbing. Shadows ripple like water.",
+    "choices": [{
+      "label": "Let it burn out naturally.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A restful night.",
+        "text": "The night passes quietly. You gain 1 ration."
+      }
+    }]
+  }]
+},
         {
           "id": "packs_rummaged_camp_instant_1365_v504_v684",
           "title": "Packs Rummaged",
@@ -10483,6 +10813,171 @@
         }
       ],
       "campfire_events": [
+        {
+  "id": "tide_in_the_embers",
+  "title": "Tide in the Embers",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "As the fire burns low, the embers shift like waves breaking against a shore. For a moment, you swear you hear surf — impossibly distant.",
+    "choices": [{
+      "label": "Sit with the sound.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A calm night.",
+        "text": "You let the rhythm settle. Sleep comes easily. You gain 1 ration."
+      }
+    },{
+      "label": "Douse the fire and sleep.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Uneasy rest.",
+        "text": "The sound fades when the fire dies. Sleep comes, but it is shallow."
+      }
+    }]
+  }]
+},
+        {
+  "id": "driftwood_charm",
+  "title": "Driftwood Charm",
+  "type": "Discovery",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone notices a piece of driftwood among the firewood — salt-bleached, carved with spirals that feel oddly deliberate.",
+    "choices": [{
+      "label": "Keep it close.",
+      "outcome": {
+        "gold": 15,
+        "rations": 0,
+        "note": "A lucky find.",
+        "text": "The wood warms in your hand. In the morning, you find coin tucked beneath it. You gain 15 gold."
+      }
+    },{
+      "label": "Burn it.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "The fire burns clean.",
+        "text": "The fire flares bright blue for a heartbeat, then settles. You gain 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "watchful_waters",
+  "title": "Watchful Waters",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Condensation beads on waterskins despite the cold. The water inside shifts, gently, as if breathing.",
+    "choices": [{
+      "label": "Say nothing.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "An unspoken understanding.",
+        "text": "No one mentions it, but everyone notices."
+      }
+    },{
+      "label": "Empty and refill them.",
+      "outcome": {
+        "gold": 0,
+        "rations": -1,
+        "note": "Supplies lost.",
+        "text": "The water spills into the dirt. You lose 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "salt_dream",
+  "title": "Dream of Salt",
+  "type": "Dream",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "That night, one of you dreams of standing ankle-deep in black water, stars reflected below instead of above.",
+    "choices": [{
+      "label": "Share the dream.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A steady morning.",
+        "text": "Talking it through eases the tension. You gain 1 ration."
+      }
+    },{
+      "label": "Keep it private.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Lingering unease.",
+        "text": "The image lingers long after waking."
+      }
+    }]
+  }]
+},
+        {
+  "id": "tide_speaker_memory",
+  "title": "A Tide-Speaker’s Words",
+  "type": "Memory",
+  "tags": ["camp", "rowthorn", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone recalls Maerys Vell’s voice — calm, sharp, warning that the sea remembers what land tries to forget.",
+    "choices": [{
+      "label": "Reflect on her warning.",
+      "outcome": {
+        "gold": 10,
+        "rations": 0,
+        "note": "Perspective gained.",
+        "text": "The thought steadies you. You gain 10 gold from pooled odds and ends."
+      }
+    }]
+  }]
+},
+        {
+  "id": "distant_horizon",
+  "title": "Distant Horizon",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Just before sleep, the horizon seems… closer. Like the world is leaning toward the sea.",
+    "choices": [{
+      "label": "Mark the feeling.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "The world shifts.",
+        "text": "You cannot shake the sense that something is moving."
+      }
+    }]
+  }]
+},
+        {
+  "id": "low_tide_fire",
+  "title": "Low-Tide Fire",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "The fire burns low and wide, spreading like a tidepool rather than climbing. Shadows ripple like water.",
+    "choices": [{
+      "label": "Let it burn out naturally.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A restful night.",
+        "text": "The night passes quietly. You gain 1 ration."
+      }
+    }]
+  }]
+},
         {
           "id": "stranger_at_the_fire_camp_funnel_1449",
           "title": "Stranger at the Fire",
@@ -14816,6 +15311,171 @@
       ],
       "campfire_events": [
         {
+  "id": "tide_in_the_embers",
+  "title": "Tide in the Embers",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "As the fire burns low, the embers shift like waves breaking against a shore. For a moment, you swear you hear surf — impossibly distant.",
+    "choices": [{
+      "label": "Sit with the sound.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A calm night.",
+        "text": "You let the rhythm settle. Sleep comes easily. You gain 1 ration."
+      }
+    },{
+      "label": "Douse the fire and sleep.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Uneasy rest.",
+        "text": "The sound fades when the fire dies. Sleep comes, but it is shallow."
+      }
+    }]
+  }]
+},
+        {
+  "id": "driftwood_charm",
+  "title": "Driftwood Charm",
+  "type": "Discovery",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone notices a piece of driftwood among the firewood — salt-bleached, carved with spirals that feel oddly deliberate.",
+    "choices": [{
+      "label": "Keep it close.",
+      "outcome": {
+        "gold": 15,
+        "rations": 0,
+        "note": "A lucky find.",
+        "text": "The wood warms in your hand. In the morning, you find coin tucked beneath it. You gain 15 gold."
+      }
+    },{
+      "label": "Burn it.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "The fire burns clean.",
+        "text": "The fire flares bright blue for a heartbeat, then settles. You gain 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "watchful_waters",
+  "title": "Watchful Waters",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Condensation beads on waterskins despite the cold. The water inside shifts, gently, as if breathing.",
+    "choices": [{
+      "label": "Say nothing.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "An unspoken understanding.",
+        "text": "No one mentions it, but everyone notices."
+      }
+    },{
+      "label": "Empty and refill them.",
+      "outcome": {
+        "gold": 0,
+        "rations": -1,
+        "note": "Supplies lost.",
+        "text": "The water spills into the dirt. You lose 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "salt_dream",
+  "title": "Dream of Salt",
+  "type": "Dream",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "That night, one of you dreams of standing ankle-deep in black water, stars reflected below instead of above.",
+    "choices": [{
+      "label": "Share the dream.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A steady morning.",
+        "text": "Talking it through eases the tension. You gain 1 ration."
+      }
+    },{
+      "label": "Keep it private.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Lingering unease.",
+        "text": "The image lingers long after waking."
+      }
+    }]
+  }]
+},
+        {
+  "id": "tide_speaker_memory",
+  "title": "A Tide-Speaker’s Words",
+  "type": "Memory",
+  "tags": ["camp", "rowthorn", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone recalls Maerys Vell’s voice — calm, sharp, warning that the sea remembers what land tries to forget.",
+    "choices": [{
+      "label": "Reflect on her warning.",
+      "outcome": {
+        "gold": 10,
+        "rations": 0,
+        "note": "Perspective gained.",
+        "text": "The thought steadies you. You gain 10 gold from pooled odds and ends."
+      }
+    }]
+  }]
+},
+        {
+  "id": "distant_horizon",
+  "title": "Distant Horizon",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Just before sleep, the horizon seems… closer. Like the world is leaning toward the sea.",
+    "choices": [{
+      "label": "Mark the feeling.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "The world shifts.",
+        "text": "You cannot shake the sense that something is moving."
+      }
+    }]
+  }]
+},
+        {
+  "id": "low_tide_fire",
+  "title": "Low-Tide Fire",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "The fire burns low and wide, spreading like a tidepool rather than climbing. Shadows ripple like water.",
+    "choices": [{
+      "label": "Let it burn out naturally.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A restful night.",
+        "text": "The night passes quietly. You gain 1 ration."
+      }
+    }]
+  }]
+},
+        {
           "id": "dinner_trouble_camp_funnel_8900",
           "title": "Dinner Trouble",
           "type": "Funnel",
@@ -19066,6 +19726,171 @@
         }
       ],
       "campfire_events": [
+        {
+  "id": "tide_in_the_embers",
+  "title": "Tide in the Embers",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "As the fire burns low, the embers shift like waves breaking against a shore. For a moment, you swear you hear surf — impossibly distant.",
+    "choices": [{
+      "label": "Sit with the sound.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A calm night.",
+        "text": "You let the rhythm settle. Sleep comes easily. You gain 1 ration."
+      }
+    },{
+      "label": "Douse the fire and sleep.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Uneasy rest.",
+        "text": "The sound fades when the fire dies. Sleep comes, but it is shallow."
+      }
+    }]
+  }]
+},
+        {
+  "id": "driftwood_charm",
+  "title": "Driftwood Charm",
+  "type": "Discovery",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone notices a piece of driftwood among the firewood — salt-bleached, carved with spirals that feel oddly deliberate.",
+    "choices": [{
+      "label": "Keep it close.",
+      "outcome": {
+        "gold": 15,
+        "rations": 0,
+        "note": "A lucky find.",
+        "text": "The wood warms in your hand. In the morning, you find coin tucked beneath it. You gain 15 gold."
+      }
+    },{
+      "label": "Burn it.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "The fire burns clean.",
+        "text": "The fire flares bright blue for a heartbeat, then settles. You gain 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "watchful_waters",
+  "title": "Watchful Waters",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Condensation beads on waterskins despite the cold. The water inside shifts, gently, as if breathing.",
+    "choices": [{
+      "label": "Say nothing.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "An unspoken understanding.",
+        "text": "No one mentions it, but everyone notices."
+      }
+    },{
+      "label": "Empty and refill them.",
+      "outcome": {
+        "gold": 0,
+        "rations": -1,
+        "note": "Supplies lost.",
+        "text": "The water spills into the dirt. You lose 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "salt_dream",
+  "title": "Dream of Salt",
+  "type": "Dream",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "That night, one of you dreams of standing ankle-deep in black water, stars reflected below instead of above.",
+    "choices": [{
+      "label": "Share the dream.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A steady morning.",
+        "text": "Talking it through eases the tension. You gain 1 ration."
+      }
+    },{
+      "label": "Keep it private.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Lingering unease.",
+        "text": "The image lingers long after waking."
+      }
+    }]
+  }]
+},
+        {
+  "id": "tide_speaker_memory",
+  "title": "A Tide-Speaker’s Words",
+  "type": "Memory",
+  "tags": ["camp", "rowthorn", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone recalls Maerys Vell’s voice — calm, sharp, warning that the sea remembers what land tries to forget.",
+    "choices": [{
+      "label": "Reflect on her warning.",
+      "outcome": {
+        "gold": 10,
+        "rations": 0,
+        "note": "Perspective gained.",
+        "text": "The thought steadies you. You gain 10 gold from pooled odds and ends."
+      }
+    }]
+  }]
+},
+        {
+  "id": "distant_horizon",
+  "title": "Distant Horizon",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Just before sleep, the horizon seems… closer. Like the world is leaning toward the sea.",
+    "choices": [{
+      "label": "Mark the feeling.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "The world shifts.",
+        "text": "You cannot shake the sense that something is moving."
+      }
+    }]
+  }]
+},
+        {
+  "id": "low_tide_fire",
+  "title": "Low-Tide Fire",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "The fire burns low and wide, spreading like a tidepool rather than climbing. Shadows ripple like water.",
+    "choices": [{
+      "label": "Let it burn out naturally.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A restful night.",
+        "text": "The night passes quietly. You gain 1 ration."
+      }
+    }]
+  }]
+},
         {
           "id": "packs_rummaged_camp_instant_7988",
           "title": "Packs Rummaged",
@@ -27649,6 +28474,171 @@
         }
       ],
       "campfire_events": [
+        {
+  "id": "tide_in_the_embers",
+  "title": "Tide in the Embers",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "As the fire burns low, the embers shift like waves breaking against a shore. For a moment, you swear you hear surf — impossibly distant.",
+    "choices": [{
+      "label": "Sit with the sound.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A calm night.",
+        "text": "You let the rhythm settle. Sleep comes easily. You gain 1 ration."
+      }
+    },{
+      "label": "Douse the fire and sleep.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Uneasy rest.",
+        "text": "The sound fades when the fire dies. Sleep comes, but it is shallow."
+      }
+    }]
+  }]
+},
+        {
+  "id": "driftwood_charm",
+  "title": "Driftwood Charm",
+  "type": "Discovery",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone notices a piece of driftwood among the firewood — salt-bleached, carved with spirals that feel oddly deliberate.",
+    "choices": [{
+      "label": "Keep it close.",
+      "outcome": {
+        "gold": 15,
+        "rations": 0,
+        "note": "A lucky find.",
+        "text": "The wood warms in your hand. In the morning, you find coin tucked beneath it. You gain 15 gold."
+      }
+    },{
+      "label": "Burn it.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "The fire burns clean.",
+        "text": "The fire flares bright blue for a heartbeat, then settles. You gain 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "watchful_waters",
+  "title": "Watchful Waters",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Condensation beads on waterskins despite the cold. The water inside shifts, gently, as if breathing.",
+    "choices": [{
+      "label": "Say nothing.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "An unspoken understanding.",
+        "text": "No one mentions it, but everyone notices."
+      }
+    },{
+      "label": "Empty and refill them.",
+      "outcome": {
+        "gold": 0,
+        "rations": -1,
+        "note": "Supplies lost.",
+        "text": "The water spills into the dirt. You lose 1 ration."
+      }
+    }]
+  }]
+},
+        {
+  "id": "salt_dream",
+  "title": "Dream of Salt",
+  "type": "Dream",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "That night, one of you dreams of standing ankle-deep in black water, stars reflected below instead of above.",
+    "choices": [{
+      "label": "Share the dream.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A steady morning.",
+        "text": "Talking it through eases the tension. You gain 1 ration."
+      }
+    },{
+      "label": "Keep it private.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "Lingering unease.",
+        "text": "The image lingers long after waking."
+      }
+    }]
+  }]
+},
+        {
+  "id": "tide_speaker_memory",
+  "title": "A Tide-Speaker’s Words",
+  "type": "Memory",
+  "tags": ["camp", "rowthorn", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Someone recalls Maerys Vell’s voice — calm, sharp, warning that the sea remembers what land tries to forget.",
+    "choices": [{
+      "label": "Reflect on her warning.",
+      "outcome": {
+        "gold": 10,
+        "rations": 0,
+        "note": "Perspective gained.",
+        "text": "The thought steadies you. You gain 10 gold from pooled odds and ends."
+      }
+    }]
+  }]
+},
+        {
+  "id": "distant_horizon",
+  "title": "Distant Horizon",
+  "type": "Omen",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "Just before sleep, the horizon seems… closer. Like the world is leaning toward the sea.",
+    "choices": [{
+      "label": "Mark the feeling.",
+      "outcome": {
+        "gold": 0,
+        "rations": 0,
+        "note": "The world shifts.",
+        "text": "You cannot shake the sense that something is moving."
+      }
+    }]
+  }]
+},
+        {
+  "id": "low_tide_fire",
+  "title": "Low-Tide Fire",
+  "type": "Atmosphere",
+  "tags": ["camp", "pelagos"],
+  "steps": [{
+    "id": "start",
+    "text": "The fire burns low and wide, spreading like a tidepool rather than climbing. Shadows ripple like water.",
+    "choices": [{
+      "label": "Let it burn out naturally.",
+      "outcome": {
+        "gold": 0,
+        "rations": 1,
+        "note": "A restful night.",
+        "text": "The night passes quietly. You gain 1 ration."
+      }
+    }]
+  }]
+},
         {
           "id": "night_raider_camp_funnel_5908",
           "title": "Night Raider",
