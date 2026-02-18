@@ -524,6 +524,37 @@ h1, h2, h3{
   white-space: nowrap;
 }
 
+/* --- Modal media (step images) --- */
+.evModal_media{
+  margin: 10px 0 12px 0;
+}
+
+.evModal_media img{
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 18px;
+  border: 1px solid rgba(212,175,55,.25);
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
+}
+
+/* --- Main Campaign styling --- */
+.evModal.isMain .evModal_type{
+  color: rgba(212,175,55,.95);
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.evModal.isMain .evModal_title{
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: .02em;
+}
+
+.evModal.isMain .evModal_desc{
+  font-size: 21px;
+}
+
 /* Bastion Warehouse: keep the panel tidy */
 .warehouseCard { overflow: hidden; }
 .warehouseCard table { width: 100%; table-layout: fixed; }
