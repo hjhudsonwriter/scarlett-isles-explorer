@@ -225,7 +225,7 @@ function explorerDefaultState() {
 },
 
 
-    grid: {
+      grid: {
       enabled: true,
       r: 38,
       offsetX: 0,
@@ -234,7 +234,13 @@ function explorerDefaultState() {
     },
 
 
-    tokens
+    fog: {
+  enabled: false,
+  // revealedByMapKey: { [mapKey]: { "q,r": true, ... } }
+  revealedByMapKey: {}
+},
+
+      tokens
   };
 }
 
@@ -288,6 +294,7 @@ function renderExplorer() {
 
 
         <button class="btn" id="explorerGridToggle" type="button">Hex Grid: On</button>
+        <button class="btn ghost" id="explorerFogToggle" type="button">Fog of War: Off</button>
         <button class="btn ghost" id="explorerSnapToggle" type="button">Snap: Off</button>
 
 
@@ -340,8 +347,9 @@ function renderExplorer() {
       <div class="explorer-stage" id="explorerStage">
         <div class="explorer-world" id="explorerWorld">
           <img id="explorerMap" class="explorer-map" alt="Map" />
-          <canvas id="explorerGrid" class="explorer-grid"></canvas>
-          <div id="explorerTokens" class="explorer-tokens"></div>
+<canvas id="explorerFog" class="explorer-fog"></canvas>
+<canvas id="explorerGrid" class="explorer-grid"></canvas>
+<div id="explorerTokens" class="explorer-tokens"></div>
           <div id="explorerMarquee" class="explorer-marquee" hidden></div>
         </div>
       </div>
@@ -745,6 +753,8 @@ evBackdrop?.addEventListener("click", closeEventModal);
   tokenLayer.style.touchAction = "none";
 stage.style.touchAction = "none";
   const marquee = root.querySelector("#explorerMarquee");
+    const fogCanvas = root.querySelector("#explorerFog");
+const btnFogToggle = root.querySelector("#explorerFogToggle");
 
 
   // Load state (merge defaults)
@@ -759,6 +769,7 @@ stage.style.touchAction = "none";
   if (saved.snap) state.snap = { ...state.snap, ...saved.snap };
     if (typeof saved.freeMove === "boolean") state.freeMove = saved.freeMove;
 if (saved.travel) state.travel = { ...state.travel, ...saved.travel };
+    if (saved.fog) state.fog = { ...state.fog, ...saved.fog };
 
 
   if (Array.isArray(saved.tokens)) {
@@ -799,7 +810,8 @@ if (saved.travel) state.travel = { ...state.travel, ...saved.travel };
   snap: state.snap,
   travel: state.travel,
   grid: state.grid,
-  tokens: state.tokens
+fog: state.fog,
+tokens: state.tokens
 });
   }
 
@@ -895,7 +907,160 @@ function hexDistance(a, b) {
 }
 
 
-  function updateReadout() {
+  // ---------- Fog of War (radius 2, persistent per map) ----------
+function hashStringDJB2(str){
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = ((h << 5) + h) + str.charCodeAt(i);
+  return (h >>> 0).toString(16);
+}
+
+function currentMapKey(){
+  if (state.mapPresetId) return `preset:${state.mapPresetId}`;
+  if (state.mapSrc) return `src:${state.mapSrc}`;
+  if (state.mapDataUrl) return `upload:${hashStringDJB2(state.mapDataUrl)}`;
+  return "none";
+}
+
+function ensureFogStore(){
+  if (!state.fog || typeof state.fog !== "object") {
+    state.fog = { enabled:false, revealedByMapKey:{} };
+  }
+  if (!state.fog.revealedByMapKey || typeof state.fog.revealedByMapKey !== "object") {
+    state.fog.revealedByMapKey = {};
+  }
+  const key = currentMapKey();
+  if (!state.fog.revealedByMapKey[key]) state.fog.revealedByMapKey[key] = {};
+  return state.fog.revealedByMapKey[key];
+}
+
+function revealAxialRadius(center, radius = 2){
+  if (!center || !Number.isFinite(center.q) || !Number.isFinite(center.r)) return;
+  const store = ensureFogStore();
+  for (let dq = -radius; dq <= radius; dq++){
+    for (let dr = -radius; dr <= radius; dr++){
+      const q = center.q + dq;
+      const r = center.r + dr;
+      const cand = { q, r };
+      if (hexDistance(center, cand) <= radius){
+        store[`${q},${r}`] = true;
+      }
+    }
+  }
+}
+
+function resizeFogCanvas(){
+  if (!fogCanvas) return;
+  const dpr = window.devicePixelRatio || 1;
+  const { w, h } = stageDims();
+  fogCanvas.width = Math.floor(w * dpr);
+  fogCanvas.height = Math.floor(h * dpr);
+  fogCanvas.style.width = `${w}px`;
+  fogCanvas.style.height = `${h}px`;
+  const ctx = fogCanvas.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function fillHexPath(ctx, cx, cy, r){
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++){
+    const angle = (Math.PI / 180) * (60 * i - 30);
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+}
+
+function drawFog(){
+  if (!fogCanvas) return;
+  resizeFogCanvas();
+
+  const ctx = fogCanvas.getContext("2d");
+  const { w, h } = stageDims();
+  ctx.clearRect(0, 0, w, h);
+
+  if (!state.fog?.enabled) return;
+
+  const key = currentMapKey();
+  const store = ensureFogStore();
+  const r = hexSize();
+
+  // 1) paint full fog
+  ctx.globalAlpha = 0.78;
+  ctx.fillStyle = "rgba(0,0,0,1)";
+  ctx.fillRect(0, 0, w, h);
+
+  // 2) punch holes for revealed hexes
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = "destination-out";
+
+  // Only iterate visible range (same style as your grid draw)
+  const pad = 3;
+  const aTL = pixelToAxial(0, 0);
+  const aTR = pixelToAxial(w, 0);
+  const aBL = pixelToAxial(0, h);
+  const aBR = pixelToAxial(w, h);
+
+  const rs = [aTL.r, aTR.r, aBL.r, aBR.r];
+  const rMin = Math.floor(Math.min(...rs)) - pad;
+  const rMax = Math.ceil(Math.max(...rs)) + pad;
+
+  const qs = [aTL.q, aTR.q, aBL.q, aBR.q];
+  const qMin0 = Math.floor(Math.min(...qs)) - pad - 6;
+  const qMax0 = Math.ceil(Math.max(...qs)) + pad + 6;
+
+  for (let rr = rMin; rr <= rMax; rr++){
+    for (let qq = qMin0; qq <= qMax0; qq++){
+      if (!store[`${qq},${rr}`]) continue;
+
+      const p = axialToPixel(qq, rr);
+      if (p.x < -2 * r || p.x > w + 2 * r || p.y < -2 * r || p.y > h + 2 * r) continue;
+
+      fillHexPath(ctx, p.x, p.y, r * 0.98);
+      ctx.fill();
+    }
+  }
+
+  ctx.globalCompositeOperation = "source-over";
+}
+
+function updateFogFromFocus(){
+  if (!state.fog?.enabled) return;
+
+  const focus = state.tokens.find(t => t.id === travelFocusId) || state.tokens[0];
+  if (!focus) return;
+
+  // Even if not snapped, round the token centre into an axial coord
+  const { w, h } = stageDims();
+  const px = (focus.x * w) + (focus.size / 2);
+  const py = (focus.y * h) + (focus.size / 2);
+  const a = axialRound(pixelToAxial(px, py));
+
+  revealAxialRadius(a, 2);
+  saveNow();
+  drawFog();
+}
+
+    function updateFogToggleUI(){
+  if (!btnFogToggle) return;
+  btnFogToggle.textContent = `Fog of War: ${state.fog?.enabled ? "On" : "Off"}`;
+  btnFogToggle.classList.toggle("ghost", !state.fog?.enabled);
+}
+
+btnFogToggle?.addEventListener("click", () => {
+  if (!state.fog) state.fog = { enabled:false, revealedByMapKey:{} };
+  state.fog.enabled = !state.fog.enabled;
+  updateFogToggleUI();
+
+  // If turning on, reveal immediately from current position
+  if (state.fog.enabled) updateFogFromFocus();
+  else drawFog();
+
+  saveNow();
+});
+    
+    function updateReadout() {
     const r = Number(state.grid.r) || 0;
     const w = Math.round(Math.sqrt(3) * r);
     btnGridToggle.textContent = `Hex Grid: ${state.grid.enabled ? "On" : "Off"}`;
@@ -1051,6 +1216,7 @@ if (rationsEl) rationsEl.textContent = String(state.trackers.rations);
 
 
   ctx.globalAlpha = 1;
+      drawFog();
 }
 
 
@@ -1237,6 +1403,7 @@ btnSnapToggle.addEventListener("click", () => {
 
       const a = axialRound(pixelToAxial(cx, cy));
       tok.axial = a;
+        updateFogFromFocus();
 
 
       // OPTIONAL but recommended: pull token neatly onto the hex centre
