@@ -1989,7 +1989,14 @@ const topLeft = {
 
 
     renderTokens();
-    return;
+
+// ✅ Fog reveal should update live while dragging (NO save spam)
+if (state.fog?.enabled) {
+  revealAxialRadius(targetAx, 2);
+  drawFog();
+}
+
+return;
   }
 
 
@@ -2014,6 +2021,18 @@ const topLeft = {
 
 
   renderTokens();
+      // ✅ Fog reveal while free-dragging (NO save spam)
+if (state.fog?.enabled) {
+  const focus = state.tokens.find(t => t.id === travelFocusId) || state.tokens[0];
+  if (focus) {
+    const { w, h } = stageDims();
+    const px = (focus.x * w) + (focus.size / 2);
+    const py = (focus.y * h) + (focus.size / 2);
+    const a = axialRound(pixelToAxial(px, py));
+    revealAxialRadius(a, 2);
+    drawFog();
+  }
+}
 });
   
   function onTokenPointerUp() {
