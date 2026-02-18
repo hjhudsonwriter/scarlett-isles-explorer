@@ -153,7 +153,54 @@ function pickRandom(arr){
   if(!Array.isArray(arr) || arr.length === 0) return null;
   return arr[Math.floor(Math.random() * arr.length)];
 }
-  // -------------------------------
+
+    // -------------------------------
+// Weather Events (manual roll input)
+// Max 1 every 3 days (cooldown)
+// -------------------------------
+const WEATHER_EVENTS = [
+  {
+    id: "cold_rain",
+    title: "Cold Rain",
+    kind: "rain",
+    text: "A cold rain settles in, needling through seams and straps. The road slicks, sounds carry oddly, and your pace becomes a negotiation.",
+    rollPrompt: "Enter the party’s Survival (or relevant) roll result:",
+    resolve(roll){
+      if (roll >= 18) return "You find shelter lines and keep spirits high. The rain becomes background noise, not a threat.";
+      if (roll >= 12) return "You push through. Clothes cling and boots squelch, but you hold the day together.";
+      return "The rain wins small battles all day. Shivering hands, soaked rations, and frayed patience. You arrive tired and damp to the bone.";
+    }
+  },
+  {
+    id: "black_storm",
+    title: "Black Storm",
+    kind: "storm",
+    text: "A storm front rolls over the Isles like a closing fist. Wind lashes the grass flat, and thunder prowls just beyond the hills.",
+    rollPrompt: "Enter the party’s Athletics/Survival roll result:",
+    resolve(roll){
+      if (roll >= 18) return "You read the storm’s rhythm and move between its teeth. No one is separated, nothing is lost.";
+      if (roll >= 12) return "You keep formation, but the storm taxes you. Progress is slow, and every decision feels heavier.";
+      return "The storm scatters you in moments. You regroup eventually, but something is lost to the wind, time, or both.";
+    }
+  },
+  {
+    id: "white_blizzard",
+    title: "White Blizzard",
+    kind: "blizzard",
+    text: "Snow comes suddenly, swallowing colour and distance. The world becomes a white corridor, and every breath feels borrowed.",
+    rollPrompt: "Enter the party’s Survival roll result:",
+    resolve(roll){
+      if (roll >= 18) return "You find the safe lines, mark your trail, and keep everyone moving. The blizzard passes without taking its due.";
+      if (roll >= 12) return "You endure. Visibility is poor and fingers go numb, but you don’t lose your way.";
+      return "The blizzard claims direction and time. You stumble into shelter late, drained, and uncertain how far you drifted.";
+    }
+  }
+];
+
+function pickRandomWeather(){
+  return WEATHER_EVENTS[Math.floor(Math.random() * WEATHER_EVENTS.length)];
+}
+    // -------------------------------
 // Explorer-local hero definitions
 // -------------------------------
 const HEROES = [
@@ -222,6 +269,10 @@ function explorerDefaultState() {
   // NEW: travel event rules (max 1 per day)
   travelEventDay: 0,          // day number we last triggered a travel event
   nextTravelEventAtMiles: 0   // random mileage threshold for today
+      
+  lastWeatherDay: -999,        // cooldown tracking
+  activeWeather: null,         // { kind:"rain"|"storm"|"blizzard", day:number }
+  weatherEventDay: 0           // day number weather last triggered (extra safety)
 },
 
 
@@ -354,6 +405,7 @@ function renderExplorer() {
         <div class="explorer-world" id="explorerWorld">
           <img id="explorerMap" class="explorer-map" alt="Map" />
 <canvas id="explorerFog" class="explorer-fog"></canvas>
+<video id="explorerWeatherVideo" class="explorer-weatherVideo" muted playsinline loop></video>
 <canvas id="explorerGrid" class="explorer-grid"></canvas>
 <div id="explorerTokens" class="explorer-tokens"></div>
           <div id="explorerMarquee" class="explorer-marquee" hidden></div>
@@ -590,6 +642,7 @@ function openEventModal(kind, event){
 const kindLabel =
   kind === "main" ? "Main Campaign"
 : kind === "camp" ? "Campfire Event"
+: kind === "weather" ? "Weather"
 : "Travel Event";
 
   evMeta.textContent = `${kindLabel} • ${provinceLabel(prov)} • ${event?.type || "—"}`;
@@ -737,7 +790,96 @@ evDesc.textContent = stripAmbientLine(event?.description || "—");
   evModal.setAttribute("aria-hidden", "false");
 }
 
-function closeEventModal(){
+  function openWeatherModal(wev){
+  // Uses the existing event modal but with a controlled 2-step flow:
+  // Step 1: show weather + prompt for roll input
+  // Step 2: show outcome + apply overlay for the remainder of the day
+
+  const dayNow = Number(state.travel?.day) || 1;
+
+  openEventModal("travel", {
+    title: wev.title,
+    steps: [
+      {
+        id: "start",
+        image: "", // no image; overlay is the visual
+        text: wev.text,
+        choices: [
+          { label: "Enter Roll", next: "roll" }
+        ]
+      },
+      {
+        id: "roll",
+        text: wev.rollPrompt || "Enter roll result:",
+        choices: [
+          { label: "Submit Roll", next: "resolve" },
+          { label: "Close" }
+        ]
+      },
+      {
+        id: "resolve",
+        text: "—",
+        choices: [{ label: "Close" }]
+      }
+    ]
+  });
+
+  // Now replace the modal content for the roll step with an input prompt.
+  // We do it surgically using existing evPrompt area (already wired).
+  if (evPrompt) {
+    evPrompt.style.display = "block";
+    evPrompt.innerHTML = `
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <span class="muted" style="font-size:16px;">Roll:</span>
+        <input id="weatherRollInput" type="number" inputmode="numeric"
+          style="width:120px; padding:10px 12px; border-radius:12px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.35); color:rgba(245,242,234,.95); font-size:18px;">
+        <button class="btn" id="weatherRollApply" type="button">Apply</button>
+      </div>
+    `;
+
+    // Put the prompt under the description
+    const input = evPrompt.querySelector("#weatherRollInput");
+    const applyBtn = evPrompt.querySelector("#weatherRollApply");
+
+    const applyRoll = () => {
+      const roll = Number(input?.value);
+      if (!Number.isFinite(roll)) {
+        alert("Enter a valid roll number.");
+        return;
+      }
+
+      // Apply overlay for the remainder of THIS day
+      state.travel.activeWeather = { kind: wev.kind, day: dayNow };
+      saveNow();
+      applyWeatherOverlay();
+
+      // Show result inside the modal
+      evMeta.textContent = `Weather • ${provinceLabel(state.travel?.provinceId || "northern_province")}`;
+      evTitle.textContent = `${wev.title} (Result)`;
+      evDesc.textContent = wev.resolve ? wev.resolve(roll) : "The weather passes.";
+
+      // Hide prompt after applying
+      evPrompt.style.display = "none";
+      evPrompt.innerHTML = "";
+
+      // Choices: just close
+      evChoices.innerHTML = "";
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn";
+      b.textContent = "Close";
+      b.addEventListener("click", closeEventModal);
+      evChoices.appendChild(b);
+    };
+
+    applyBtn?.addEventListener("click", applyRoll);
+    input?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") applyRoll();
+    });
+  }
+}
+
+  function closeEventModal(){
   if(!evModal) return;
   evModal.classList.remove("isOpen");
   evModal.setAttribute("aria-hidden", "true");
@@ -762,6 +904,7 @@ evBackdrop?.addEventListener("click", closeEventModal);
   const tokenLayer = root.querySelector("#explorerTokens");
   tokenLayer.style.touchAction = "none";
 stage.style.touchAction = "none";
+    const weatherVideo = root.querySelector("#explorerWeatherVideo");
   const marquee = root.querySelector("#explorerMarquee");
     const fogCanvas = root.querySelector("#explorerFog");
 const btnFogToggle = root.querySelector("#explorerFogToggle");
@@ -1449,7 +1592,51 @@ if (state.snap.enabled) {
 }
 
 
-  function rerenderAll() {
+  function applyWeatherOverlay(){
+  if(!weatherVideo) return;
+
+  const aw = state.travel?.activeWeather;
+  const dayNow = Number(state.travel?.day) || 1;
+
+  // If overlay is from a previous day, clear it
+  if (aw && Number(aw.day) !== dayNow) {
+    state.travel.activeWeather = null;
+    saveNow();
+  }
+
+  const active = state.travel?.activeWeather;
+  if(!active){
+    weatherVideo.pause?.();
+    weatherVideo.removeAttribute("src");
+    weatherVideo.style.display = "none";
+    return;
+  }
+
+  // Map kind to MP4
+  const src =
+    active.kind === "blizzard" ? withBase("assets/overlays/blizzard_overlay.mp4") :
+    active.kind === "storm"    ? withBase("assets/overlays/storm_overlay.mp4") :
+    active.kind === "rain"     ? withBase("assets/overlays/rain_overlay.mp4") :
+    null;
+
+  if(!src){
+    weatherVideo.style.display = "none";
+    return;
+  }
+
+  if (weatherVideo.getAttribute("src") !== src) {
+    weatherVideo.setAttribute("src", src);
+    weatherVideo.load?.();
+  }
+
+  weatherVideo.style.display = "block";
+
+  // autoplay safely
+  const p = weatherVideo.play?.();
+  if(p && typeof p.catch === "function") p.catch(()=>{ /* ignore autoplay restrictions */ });
+}
+
+    function rerenderAll() {
     // Map
     // Map: uploaded map overrides preset map
 if (state.mapDataUrl) {
@@ -1473,6 +1660,7 @@ if (state.mapDataUrl) {
     drawHexGrid();
     renderTokens();
     updateTravelUI();
+    applyWeatherOverlay();    
   }
 
 
@@ -1788,6 +1976,27 @@ if (!maybeTriggerForcedMainEvent()) {
 
   // Advance day + reset miles (your existing behaviour)
 state.travel.day = (Number(state.travel.day) || 1) + 1;
+    // Clear any weather overlay from the previous day (weather lasts only "the remainder of that day")
+if (state.travel.activeWeather) {
+  state.travel.activeWeather = null;
+}
+    // ---------- Weather Event (max 1 every 3 days) ----------
+const dayNow = Number(state.travel.day) || 1;
+const last = Number(state.travel.lastWeatherDay) || -999;
+const COOLDOWN_DAYS = 3;
+
+// Optional chance so it doesn't happen exactly on cooldown every time
+const WEATHER_CHANCE = 0.45;
+
+if ((dayNow - last) >= COOLDOWN_DAYS && Math.random() < WEATHER_CHANCE) {
+  const wev = pickRandomWeather();
+  if (wev) {
+    // Open a weather modal requiring a manual roll input
+    openWeatherModal(wev);
+    state.travel.lastWeatherDay = dayNow;
+    state.travel.weatherEventDay = dayNow;
+  }
+}
 
 /* NEW: every 7 days, reset per-player trackers + show bastion prompt */
 if ((Number(state.travel.day) || 1) % 7 === 1) {
