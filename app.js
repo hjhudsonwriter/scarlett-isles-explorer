@@ -297,6 +297,11 @@ function renderExplorer() {
         <button class="btn ghost" id="explorerFogToggle" type="button">Fog of War: Off</button>
         <button class="btn ghost" id="explorerFogReset" type="button">Reset Fog</button>
         <button class="btn ghost" id="explorerSnapToggle" type="button">Snap: Off</button>
+        <span class="explorer-divider"></span>
+<button class="btn ghost" id="explorerExportSave" type="button">Export Save</button>
+<button class="btn ghost" id="explorerImportSave" type="button">Import Save</button>
+<input id="explorerImportFile" type="file" accept="application/json" hidden />
+
 
 
         <div class="explorer-group">
@@ -446,6 +451,10 @@ function renderExplorer() {
   const btnFs = root.querySelector("#explorerFullscreen");
   const btnHideUi = root.querySelector("#explorerHideUi");
   const btnSnapToggle = root.querySelector("#explorerSnapToggle");
+  const btnExportSave = root.querySelector("#explorerExportSave");
+  const btnImportSave = root.querySelector("#explorerImportSave");
+  const importFile = root.querySelector("#explorerImportFile");
+  
 
 
 const dayLabel = root.querySelector("#explorerDayLabel");
@@ -816,6 +825,89 @@ fog: state.fog,
 tokens: state.tokens
 });
   }
+// -------------------------------
+// Export / Import Save (JSON)
+// -------------------------------
+function buildSavePayload(){
+  // IMPORTANT: keep identical to what saveNow() persists
+  return {
+    freeMove: state.freeMove,
+    mapSrc: state.mapSrc,
+    mapPresetId: state.mapPresetId,
+    mapDataUrl: state.mapDataUrl,
+    snap: state.snap,
+    travel: state.travel,
+    grid: state.grid,
+    fog: state.fog,
+    tokens: state.tokens
+  };
+}
+
+function downloadJson(filename, obj){
+  const json = JSON.stringify(obj, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+function safeParseJson(text){
+  try { return JSON.parse(text); } catch { return null; }
+}
+
+function looksLikeExplorerSave(obj){
+  if(!obj || typeof obj !== "object") return false;
+  // Minimal shape checks (don’t be strict, just safe)
+  if(!("grid" in obj)) return false;
+  if(!("tokens" in obj) || !Array.isArray(obj.tokens)) return false;
+  if(!("travel" in obj)) return false;
+  return true;
+}
+
+btnExportSave?.addEventListener("click", () => {
+  // ensure latest is saved
+  saveNow();
+
+  const payload = buildSavePayload();
+  const day = Number(payload?.travel?.day) || 1;
+  const map = payload.mapPresetId || "custom";
+  const stamp = new Date().toISOString().slice(0,10);
+  downloadJson(`scarlett_isles_explorer_save_${map}_day${day}_${stamp}.json`, payload);
+
+  setNotice("Save exported.");
+});
+
+btnImportSave?.addEventListener("click", () => {
+  importFile?.click();
+});
+
+importFile?.addEventListener("change", async () => {
+  const file = importFile.files && importFile.files[0];
+  if(!file) return;
+
+  const text = await file.text();
+  const obj = safeParseJson(text);
+
+  if(!looksLikeExplorerSave(obj)){
+    alert("That file doesn’t look like a Scarlett Isles Explorer save JSON.");
+    importFile.value = "";
+    return;
+  }
+
+  // Overwrite localStorage save
+  explorerSave(obj);
+
+  // Easiest + safest: hard reload to rebuild state cleanly
+  setNotice("Save imported. Reloading…");
+  setTimeout(() => location.reload(), 250);
+});
 
 
   function stageDims() {
