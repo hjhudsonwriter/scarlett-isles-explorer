@@ -77,6 +77,48 @@ function mapIdToProvinceId(mapId){
 // -------------------------------
 const EVENTS_URL = withBase("data/events.json");
 
+    // -------------------------------
+// Main Campaign (forced) events
+// -------------------------------
+const MAIN_EVENTS = [
+  {
+    id: "tide_remembers_prologue",
+    title: "The Tide Remembers - Prologue",
+    steps: [
+      {
+        id: "start",
+        image: withBase("assets/main_events/tide_remembers_1.png"),
+        text: "As you make your way through the Isles, a bird descends from the sky, swooping down towards your group.",
+        choices: [{ label: "Continue", next: "step2" }]
+      },
+      {
+        id: "step2",
+        image: withBase("assets/main_events/tide_remembers_2.png"),
+        text: "The bird slows its flight, wings flapping as it lands softly on Magnus' outstretched arm. A roll of parchment is fastened to the birds leg. You carefully remove it, and the bird takes flight.",
+        choices: [{ label: "Continue", next: "step3" }]
+      },
+      {
+        id: "step3",
+        image: withBase("assets/main_events/tide_remembers_3.png"),
+        text:
+`You unroll the parchment, the message reads:
+
+Friends of the East...
+I will not ask you to act yet, but if you are as I remember you to be, you may want to stand witness to the turning of the tide.
+And believe me, the tide is turning.
+Will you go to it, or be carried by it?
+
+- Maerys Vell, The Voice of The Tide`,
+        choices: [{ label: "Close" }]
+      }
+    ]
+  }
+];
+
+function getMainEventById(id){
+  return MAIN_EVENTS.find(e => e.id === id) || null;
+}
+
 const PROVINCES = [
   { id: "northern_province", label: "Northern Province" },
   { id: "midland_province",  label: "Midland Province" },
@@ -171,6 +213,8 @@ function explorerDefaultState() {
     travel: {
   day: 1,
   milesUsed: 0,
+  forcedMainEvent: null, // { id: string, dueDay: number }
+  forcedMainEventFired: false,
 
   // NEW: which region we’re currently traveling in
   provinceId: "northern_province",
@@ -342,6 +386,12 @@ function renderExplorer() {
   <button class="btn ghost" id="explorerResetTravel" type="button">Reset Travel</button>
   <button class="btn ghost" id="explorerFreeMove" type="button">Free Move: OFF</button>
   <button class="btn" id="explorerMakeCamp" type="button">Make Camp</button>
+  <div class="explorer-mainEventTools">
+  <select id="explorerMainEventSelect" class="explorer-mainEventSelect">
+    <option value="">Force Main Campaign Event…</option>
+  </select>
+  <button class="btn" id="explorerQueueMainEvent" type="button">Queue</button>
+</div>
 </div>
   </div>
 </div>
@@ -358,9 +408,10 @@ function renderExplorer() {
       <button class="btn ghost evModal_close" id="evClose" type="button">Close</button>
     </div>
 
-    <div class="evModal_desc" id="evDesc">—</div>
-    <div class="evModal_prompt" id="evPrompt" style="display:none;"></div>
-    <div class="evChoices" id="evChoices"></div>
+    <div class="evModal_media" id="evMedia" style="display:none;"></div>
+<div class="evModal_desc" id="evDesc">—</div>
+<div class="evModal_prompt" id="evPrompt" style="display:none;"></div>
+<div class="evChoices" id="evChoices"></div>
   </div>
 </div>
 
@@ -398,7 +449,43 @@ const goldEl = root.querySelector("#explorerGold");
 const rationsEl = root.querySelector("#explorerRations");
 const noticeEl = root.querySelector("#explorerNotice");
 const btnMakeCamp = root.querySelector("#explorerMakeCamp");
-    const btnFreeMove = root.querySelector("#explorerFreeMove");
+  const mainEventSel = root.querySelector("#explorerMainEventSelect");
+  const btnQueueMainEvent = root.querySelector("#explorerQueueMainEvent");
+  const btnFreeMove = root.querySelector("#explorerFreeMove");
+
+    // Populate forced-event dropdown
+if (mainEventSel) {
+  MAIN_EVENTS.forEach(ev => {
+    const opt = document.createElement("option");
+    opt.value = ev.id;
+    opt.textContent = ev.title;
+    mainEventSel.appendChild(opt);
+  });
+}
+
+function queueMainEvent(id){
+  const ev = getMainEventById(id);
+  if (!ev) return;
+
+  const dayNow = Number(state.travel?.day) || 1;
+  const dueInDays = 1 + Math.floor(Math.random() * 2); // 1–2 days
+  const dueDay = dayNow + dueInDays;
+
+  state.travel.forcedMainEvent = { id: ev.id, dueDay };
+  state.travel.forcedMainEventFired = false;
+
+  saveNow();
+  setNotice(`Main Campaign event queued (due by Day ${dueDay}).`);
+}
+
+btnQueueMainEvent?.addEventListener("click", () => {
+  const id = String(mainEventSel?.value || "").trim();
+  if (!id) {
+    alert("Select a Main Campaign event first.");
+    return;
+  }
+  queueMainEvent(id);
+});
 
 function updateFreeMoveUI(){
   if(!btnFreeMove) return;
@@ -435,6 +522,7 @@ const evClose = root.querySelector("#evClose");
 const evMeta = root.querySelector("#evMeta");
 const evTitle = root.querySelector("#evTitle");
 const evDesc = root.querySelector("#evDesc");
+const evMedia = root.querySelector("#evMedia");
 const evPrompt = root.querySelector("#evPrompt");
 const evChoices = root.querySelector("#evChoices");
 
@@ -481,10 +569,14 @@ function openEventModal(kind, event){
   if(!evModal) return;
 
   const prov = state.travel?.provinceId || "northern_province";
-  const kindLabel = kind === "camp" ? "Campfire Event" : "Travel Event";
+const kindLabel =
+  kind === "main" ? "Main Campaign"
+: kind === "camp" ? "Campfire Event"
+: "Travel Event";
 
   evMeta.textContent = `${kindLabel} • ${provinceLabel(prov)} • ${event?.type || "—"}`;
   evTitle.textContent = event?.title || "Unknown Event";
+    evModal.classList.toggle("isMain", kind === "main");
 
   // ------- NEW: steps support (backwards compatible) -------
   const hasSteps = Array.isArray(event?.steps) && event.steps.length;
@@ -494,6 +586,17 @@ function openEventModal(kind, event){
   const steps = event.steps;
   const step = steps.find(s => s.id === stepId) || steps[0];
 
+  // Media (optional)
+if (evMedia) {
+  const imgSrc = step?.image ? String(step.image) : "";
+  if (imgSrc) {
+    evMedia.style.display = "block";
+    evMedia.innerHTML = `<img src="${imgSrc}" alt="">`;
+  } else {
+    evMedia.style.display = "none";
+    evMedia.innerHTML = "";
+  }
+}
   evDesc.textContent = stripAmbientLine(step?.text || "—");
 
   // No separate prompt field in step format (text is the content)
@@ -574,7 +677,11 @@ function openEventModal(kind, event){
     renderStep(startId);
   } else {
     // ------- OLD FORMAT (unchanged) -------
-    evDesc.textContent = stripAmbientLine(event?.description || "—");
+    if (evMedia) {
+  evMedia.style.display = "none";
+  evMedia.innerHTML = "";
+}
+evDesc.textContent = stripAmbientLine(event?.description || "—");
 
     if(event?.prompt){
       evPrompt.style.display = "block";
@@ -1362,16 +1469,41 @@ window.addEventListener("keydown", onKeyToggleUi);
   });
 
 
-  // ---------- Make Camp ----------
+  function maybeTriggerForcedMainEvent(){
+  const queued = state.travel?.forcedMainEvent;
+  if (!queued || state.travel?.forcedMainEventFired) return false;
+
+  const dayNow = Number(state.travel?.day) || 1;
+  const dueDay = Number(queued.dueDay) || (dayNow + 1);
+
+  // Only trigger on/after due day
+  if (dayNow < dueDay) return false;
+
+  const ev = getMainEventById(queued.id);
+  if (!ev) return false;
+
+  openEventModal("main", ev);
+
+  state.travel.forcedMainEventFired = true;
+  state.travel.forcedMainEvent = null;
+  saveNow();
+
+  return true;
+}
+
+    // ---------- Make Camp ----------
 btnMakeCamp.addEventListener("click", () => {
   // CAMPFIRE EVENT
   const prov = state.travel?.provinceId || "northern_province";
   const db = EVENT_DB;
 
+  // If a forced main event is due, it replaces the campfire event.
+if (!maybeTriggerForcedMainEvent()) {
   if (db?.provinces?.[prov]?.campfire_events?.length) {
     const ev = pickRandom(db.provinces[prov].campfire_events);
     if (ev) openEventModal("camp", ev);
   }
+}
 
   // Advance day + reset miles (your existing behaviour)
 state.travel.day = (Number(state.travel.day) || 1) + 1;
@@ -1807,6 +1939,11 @@ if (state.travel.travelEventDay !== dayNow) {
   const milesNow = Number(anchorNow?.milesUsed) || 0;
 
   if (milesNow >= state.travel.nextTravelEventAtMiles) {
+
+  // If forced main event is due, it replaces the travel event.
+  if (maybeTriggerForcedMainEvent()) {
+    state.travel.travelEventDay = dayNow; // still counts as the day's travel event
+  } else {
     const prov = state.travel?.provinceId || "northern_province";
     const db = EVENT_DB;
 
@@ -1818,6 +1955,7 @@ if (state.travel.travelEventDay !== dayNow) {
       }
     }
   }
+}
 }
 
       travelFocusId = anchorTok.id;
