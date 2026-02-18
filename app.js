@@ -295,6 +295,7 @@ function renderExplorer() {
 
         <button class="btn" id="explorerGridToggle" type="button">Hex Grid: On</button>
         <button class="btn ghost" id="explorerFogToggle" type="button">Fog of War: Off</button>
+        <button class="btn ghost" id="explorerFogReset" type="button">Reset Fog</button>
         <button class="btn ghost" id="explorerSnapToggle" type="button">Snap: Off</button>
 
 
@@ -755,6 +756,7 @@ stage.style.touchAction = "none";
   const marquee = root.querySelector("#explorerMarquee");
     const fogCanvas = root.querySelector("#explorerFog");
 const btnFogToggle = root.querySelector("#explorerFogToggle");
+    const btnFogReset = root.querySelector("#explorerFogReset");
 
 
   // Load state (merge defaults)
@@ -987,7 +989,7 @@ function drawFog(){
   const r = hexSize();
 
   // 1) paint full fog
-  ctx.globalAlpha = 0.78;
+  ctx.globalAlpha = 0.86;
   ctx.fillStyle = "rgba(0,0,0,1)";
   ctx.fillRect(0, 0, w, h);
 
@@ -1060,6 +1062,26 @@ btnFogToggle?.addEventListener("click", () => {
   saveNow();
 });
     
+    btnFogReset?.addEventListener("click", () => {
+  const key = currentMapKey();
+
+  if (!state.fog) state.fog = { enabled:false, revealedByMapKey:{} };
+  if (!state.fog.revealedByMapKey) state.fog.revealedByMapKey = {};
+
+  // Clear just the current map’s fog memory
+  state.fog.revealedByMapKey[key] = {};
+
+  // If fog is on, immediately re-reveal around current position
+  if (state.fog.enabled) {
+    updateFogFromFocus();
+  } else {
+    drawFog();
+    saveNow();
+  }
+
+  setNotice("Fog reset for this map.");
+});
+
     function updateReadout() {
     const r = Number(state.grid.r) || 0;
     const w = Math.round(Math.sqrt(3) * r);
