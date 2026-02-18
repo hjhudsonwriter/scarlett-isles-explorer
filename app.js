@@ -268,7 +268,7 @@ function explorerDefaultState() {
 
   // NEW: travel event rules (max 1 per day)
   travelEventDay: 0,          // day number we last triggered a travel event
-  nextTravelEventAtMiles: 0   // random mileage threshold for today
+  nextTravelEventAtMiles: 0,   // random mileage threshold for today
       
   lastWeatherDay: -999,        // cooldown tracking
   activeWeather: null,         // { kind:"rain"|"storm"|"blizzard", day:number }
