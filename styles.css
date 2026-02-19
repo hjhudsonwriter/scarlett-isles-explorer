@@ -714,6 +714,11 @@ flex-direction: column;
   margin-top: 12px;
 }
 
+/* Weather roll row (optional helper) */
+.evRollRow select,
+.evRollRow input{
+  font-family: "Cormorant Garamond", serif;
+}
 /* Choices: bigger buttons + more padding */
 .evChoices{
   margin-top: 18px;
