@@ -536,9 +536,6 @@ function renderExplorer() {
         <span class="muted">• Gold:</span>
         <strong id="explorerGold">0</strong>
 
-        <span class="muted">• Rations:</span>
-        <strong id="explorerRations">0</strong>
-
         <span class="muted">•</span>
         <span id="explorerNotice" class="tiny" style="opacity:.9"></span>
       </div>
@@ -614,7 +611,6 @@ const milesLeftEl = root.querySelector("#explorerMilesLeft");
 const modeEl = root.querySelector("#explorerMode");
 const effectsEl = root.querySelector("#explorerEffects");
 const goldEl = root.querySelector("#explorerGold");
-const rationsEl = root.querySelector("#explorerRations");
 const noticeEl = root.querySelector("#explorerNotice");
 const btnMakeCamp = root.querySelector("#explorerMakeCamp");
   const mainEventSel = root.querySelector("#explorerMainEventSelect");
@@ -706,15 +702,13 @@ const evChoices = root.querySelector("#evChoices");
 
   // Safe state bucket
   if(!state.trackers || typeof state.trackers !== "object"){
-    state.trackers = { gold: 0, rations: 0, log: [] };
+    state.trackers = { gold: 0, log: [] };
   }
   if(!Number.isFinite(state.trackers.gold)) state.trackers.gold = 0;
-  if(!Number.isFinite(state.trackers.rations)) state.trackers.rations = 0;
   if(!Array.isArray(state.trackers.log)) state.trackers.log = [];
 
   // Numbers
   if(Number.isFinite(outcome.gold)) state.trackers.gold += outcome.gold;
-  if(Number.isFinite(outcome.rations)) state.trackers.rations += outcome.rations;
 
   // Log / note
   const note = outcome.note ? String(outcome.note) : "";
@@ -1464,14 +1458,12 @@ function updateTravelUI() {
   if (effectsEl) effectsEl.textContent = t.effects;
     // Trackers (safe defaults)
 if (!state.trackers || typeof state.trackers !== "object") {
-  state.trackers = { gold: 0, rations: 0, log: [] };
+  state.trackers = { gold: 0, log: [] };
 }
 if (!Number.isFinite(state.trackers.gold)) state.trackers.gold = 0;
-if (!Number.isFinite(state.trackers.rations)) state.trackers.rations = 0;
 if (!Array.isArray(state.trackers.log)) state.trackers.log = [];
 
 if (goldEl) goldEl.textContent = String(state.trackers.gold);
-if (rationsEl) rationsEl.textContent = String(state.trackers.rations);
 
 
 
@@ -2115,14 +2107,12 @@ if ((dayNow - last) >= COOLDOWN_DAYS && Math.random() < WEATHER_CHANCE) {
 /* NEW: every 7 days, reset per-player trackers + show bastion prompt */
 if ((Number(state.travel.day) || 1) % 7 === 1) {
   // ensure trackers exist
-  if (!state.trackers) state.trackers = { gold: 0, rations: 0, log: [] };
+  if (!state.trackers) state.trackers = { gold: 0, log: [] };
   if (!Number.isFinite(state.trackers.gold)) state.trackers.gold = 0;
-  if (!Number.isFinite(state.trackers.rations)) state.trackers.rations = 0;
   if (!Array.isArray(state.trackers.log)) state.trackers.log = [];
 
   // reset weekly (per-player)
   state.trackers.gold = 0;
-  state.trackers.rations = 0;
 
   // optional: keep log, or clear it
   // state.trackers.log = [];
