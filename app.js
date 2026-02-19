@@ -197,6 +197,133 @@ const WEATHER_EVENTS = [
   }
 ];
 
+// -------------------------------
+// Weather Events (table roll input)
+// Max 1 every 3 days (cooldown)
+// -------------------------------
+const WEATHER_EVENTS = [
+  {
+    id: "white_blizzard",
+    title: "White Blizzard",
+    kind: "blizzard",
+    intro:
+      "Snow comes suddenly, swallowing colour and distance. The world becomes a white corridor, and every breath feels borrowed.",
+    mechanic: {
+      label: "Group DC 13 Constitution Save",
+      dc: 13,
+      options: null // no choice
+    },
+    resolve(roll){
+      if (roll >= 13) {
+        return {
+          headline: "Success",
+          text: "You keep blood moving and breath steady. The blizzard bites, but takes nothing.",
+          effect: "No effect."
+        };
+      }
+      return {
+        headline: "Failure",
+        text: "Cold seeps into joints and resolve. The day costs more than it should.",
+        effect: "Each character gains 1 level of Exhaustion."
+      };
+    }
+  },
+
+  {
+    id: "black_storm",
+    title: "Black Storm",
+    kind: "storm",
+    intro:
+      "A storm front rolls over the Isles like a closing fist. Wind lashes the grass flat, and thunder prowls just beyond the hills.",
+    mechanic: {
+      label: "DC 14 Save (choose one)",
+      dc: 14,
+      options: [
+        { id: "wis", label: "Wisdom Save (hold your nerve)" },
+        { id: "dex", label: "Dexterity Save (dodge debris/mud)" }
+      ]
+    },
+    resolve(roll){
+      if (roll >= 14) {
+        return {
+          headline: "Success",
+          text: "You ride the chaos instead of being ridden by it. Adrenaline turns into focus.",
+          effect: "Gain Inspiration (for the next day)."
+        };
+      }
+      return {
+        headline: "Failure",
+        text: "The thunder gets under your skin. Every snap of wind feels like an ambush.",
+        effect: "Rattled: no Reactions or Opportunity Attacks in the next day’s first combat encounter."
+      };
+    }
+  },
+
+  {
+    id: "cold_rain",
+    title: "Cold Downpour",
+    kind: "rain",
+    intro:
+      "Rain needles through seams and straps. The road slicks, sounds carry oddly, and your pace becomes a negotiation.",
+    mechanic: {
+      label: "DC 12 Survival Check",
+      dc: 12,
+      options: null
+    },
+    resolve(roll){
+      if (roll >= 17) {
+        return {
+          headline: "Great Success",
+          text: "You find a dry pocket of ground and a forgotten cache tucked beneath roots and stone.",
+          effect: "Dry Cache: roll on a minor loot table."
+        };
+      }
+      if (roll >= 12) {
+        return {
+          headline: "Success",
+          text: "You keep gear dry enough and spirits steady. Miserable, but manageable.",
+          effect: "No effect."
+        };
+      }
+      return {
+        headline: "Failure",
+        text: "Everything is damp. Bowstrings slacken, armour sticks, and boots feel like anchors.",
+        effect: "Soggy Gear: Disadvantage on Initiative rolls for the next day."
+      };
+    }
+  },
+
+  {
+    id: "sun_heatwave",
+    title: "Sun & Heatwave",
+    kind: "sun_heat",
+    intro:
+      "The sun presses down like a weight. Water warms, tempers shorten, and the road shimmers ahead in wavering ribbons.",
+    mechanic: {
+      label: "DC 13 Check/Save (choose one)",
+      dc: 13,
+      options: [
+        { id: "ath", label: "Athletics (push through the heat)" },
+        { id: "con", label: "Constitution Save (endure and pace yourself)" }
+      ]
+    },
+    resolve(roll){
+      if (roll >= 13) {
+        return {
+          headline: "Success",
+          text: "You find shade and a cooler draft, maybe even a thin spring trickling through stone.",
+          effect: "No effect."
+        };
+      }
+      return {
+        headline: "Failure",
+        text: "The heat steals distance and sharpness. Every mile feels doubled.",
+        effect: "Lethargy: limit travel to 2 hexes (12 miles) today."
+      };
+    }
+  }
+];
+
 function pickRandomWeather(){
   return WEATHER_EVENTS[Math.floor(Math.random() * WEATHER_EVENTS.length)];
 }
@@ -791,92 +918,105 @@ evDesc.textContent = stripAmbientLine(event?.description || "—");
 }
 
   function openWeatherModal(wev){
-  // Uses the existing event modal but with a controlled 2-step flow:
-  // Step 1: show weather + prompt for roll input
-  // Step 2: show outcome + apply overlay for the remainder of the day
-
   const dayNow = Number(state.travel?.day) || 1;
 
-  openEventModal("travel", {
+  // Build clear mechanic text for the modal body
+  const mech = wev?.mechanic || {};
+  const dc = Number(mech.dc) || 0;
+  const mechLine = mech.label ? `${mech.label}` : (dc ? `DC ${dc}` : "Roll at the table");
+
+  // Open as a WEATHER modal (not travel)
+  openEventModal("weather", {
     title: wev.title,
     steps: [
       {
         id: "start",
-        image: "", // no image; overlay is the visual
-        text: wev.text,
-        choices: [
-          { label: "Enter Roll", next: "roll" }
-        ]
-      },
-      {
-        id: "roll",
-        text: wev.rollPrompt || "Enter roll result:",
-        choices: [
-          { label: "Submit Roll", next: "resolve" },
-          { label: "Close" }
-        ]
-      },
-      {
-        id: "resolve",
-        text: "—",
-        choices: [{ label: "Close" }]
+        image: "", // overlay is the visual
+        text:
+`${wev.intro}
+
+ROLL: ${mechLine}
+
+Enter the final table roll result below to resolve the weather’s effect.`,
+        choices: [] // we will provide our own single Resolve button
       }
     ]
   });
 
-  // Now replace the modal content for the roll step with an input prompt.
-  // We do it surgically using existing evPrompt area (already wired).
-  if (evPrompt) {
-    evPrompt.style.display = "block";
-    evPrompt.innerHTML = `
-      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-        <span class="muted" style="font-size:16px;">Roll:</span>
-        <input id="weatherRollInput" type="number" inputmode="numeric"
-          style="width:120px; padding:10px 12px; border-radius:12px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.35); color:rgba(245,242,234,.95); font-size:18px;">
-        <button class="btn" id="weatherRollApply" type="button">Apply</button>
-      </div>
-    `;
+  // Inject a single, unambiguous roll control into evPrompt
+  if (!evPrompt) return;
 
-    // Put the prompt under the description
-    const input = evPrompt.querySelector("#weatherRollInput");
-    const applyBtn = evPrompt.querySelector("#weatherRollApply");
+  const hasOptions = Array.isArray(mech.options) && mech.options.length > 0;
 
-    const applyRoll = () => {
-      const roll = Number(input?.value);
-      if (!Number.isFinite(roll)) {
-        alert("Enter a valid roll number.");
-        return;
-      }
+  evPrompt.style.display = "block";
+  evPrompt.innerHTML = `
+    <div class="evRollRow" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      ${hasOptions ? `
+        <select id="weatherRollType"
+          style="min-width:260px; padding:10px 12px; border-radius:12px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.35); color:rgba(245,242,234,.95); font-size:16px;">
+          ${mech.options.map(o => `<option value="${o.id}">${o.label}</option>`).join("")}
+        </select>
+      ` : ``}
 
-      // Apply overlay for the remainder of THIS day
-      state.travel.activeWeather = { kind: wev.kind, day: dayNow };
-      saveNow();
-      applyWeatherOverlay();
+      <label class="muted" for="weatherRollInput" style="font-size:16px;">Roll (d20):</label>
 
-      // Show result inside the modal
-      evMeta.textContent = `Weather • ${provinceLabel(state.travel?.provinceId || "northern_province")}`;
-      evTitle.textContent = `${wev.title} (Result)`;
-      evDesc.textContent = wev.resolve ? wev.resolve(roll) : "The weather passes.";
+      <input id="weatherRollInput" type="number" inputmode="numeric"
+        style="width:140px; padding:10px 12px; border-radius:12px; border:1px solid rgba(212,175,55,.25); background:rgba(0,0,0,.35); color:rgba(245,242,234,.95); font-size:18px;">
 
-      // Hide prompt after applying
-      evPrompt.style.display = "none";
-      evPrompt.innerHTML = "";
+      <button class="btn" id="weatherRollResolve" type="button">Resolve</button>
+    </div>
 
-      // Choices: just close
-      evChoices.innerHTML = "";
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "btn";
-      b.textContent = "Close";
-      b.addEventListener("click", closeEventModal);
-      evChoices.appendChild(b);
-    };
+    <div class="muted" style="margin-top:10px; font-size:15px;">
+      Tip: Roll at the table, then type the final result here (after modifiers).
+    </div>
+  `;
 
-    applyBtn?.addEventListener("click", applyRoll);
-    input?.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") applyRoll();
-    });
-  }
+  const input = evPrompt.querySelector("#weatherRollInput");
+  const sel = evPrompt.querySelector("#weatherRollType");
+  const resolveBtn = evPrompt.querySelector("#weatherRollResolve");
+
+  const resolveRoll = () => {
+    const roll = Number(input?.value);
+    if (!Number.isFinite(roll)) {
+      alert("Enter a valid roll number.");
+      return;
+    }
+
+    // Apply overlay for remainder of THIS day
+    state.travel.activeWeather = { kind: wev.kind, day: dayNow };
+    saveNow();
+    applyWeatherOverlay();
+
+    // Resolve outcome text
+    const result = wev.resolve ? wev.resolve(roll, sel ? String(sel.value) : null) : null;
+
+    const headline = result?.headline ? String(result.headline) : "Result";
+    const body = result?.text ? String(result.text) : "The weather passes.";
+    const effect = result?.effect ? String(result.effect) : "";
+
+    evMeta.textContent = `Weather • ${provinceLabel(state.travel?.provinceId || "northern_province")}`;
+    evTitle.textContent = `${wev.title} (${headline})`;
+
+    evDesc.textContent = effect ? `${body}\n\nEFFECT: ${effect}` : body;
+
+    // Hide roll prompt after resolving
+    evPrompt.style.display = "none";
+    evPrompt.innerHTML = "";
+
+    // One clear close button
+    evChoices.innerHTML = "";
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn";
+    b.textContent = "Close";
+    b.addEventListener("click", closeEventModal);
+    evChoices.appendChild(b);
+  };
+
+  resolveBtn?.addEventListener("click", resolveRoll);
+  input?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") resolveRoll();
+  });
 }
 
   function closeEventModal(){
@@ -1614,10 +1754,11 @@ if (state.snap.enabled) {
 
   // Map kind to MP4
   const src =
-    active.kind === "blizzard" ? withBase("assets/overlays/blizzard_overlay.mp4") :
-    active.kind === "storm"    ? withBase("assets/overlays/storm_overlay.mp4") :
-    active.kind === "rain"     ? withBase("assets/overlays/rain_overlay.mp4") :
-    null;
+  active.kind === "blizzard"  ? withBase("assets/overlays/blizzard_overlay.mp4") :
+  active.kind === "storm"     ? withBase("assets/overlays/storm_overlay.mp4") :
+  active.kind === "rain"      ? withBase("assets/overlays/rain_overlay.mp4") :
+  active.kind === "sun_heat"  ? withBase("assets/overlays/sun_heat_overlay.mp4") :
+  null;
 
   if(!src){
     weatherVideo.style.display = "none";
