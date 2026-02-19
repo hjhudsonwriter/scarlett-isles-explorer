@@ -123,7 +123,8 @@ Will you go to it, or be carried by it?
       { id: "t4",    image: withBase("assets/main_events/turning_tide_4.png"), text: "", choices: [{ label: "Continue", next: "t5" }] },
       { id: "t5",    image: withBase("assets/main_events/turning_tide_5.png"), text: "", choices: [{ label: "Continue", next: "t6" }] },
       { id: "t6",    image: withBase("assets/main_events/turning_tide_6.png"), text: "", choices: [{ label: "Continue", next: "t7" }] },
-      { id: "t7",    image: withBase("assets/main_events/turning_tide_7.png"), text: "", choices: [{ label: "Close" }] }
+      { id: "t7",    image: withBase("assets/main_events/turning_tide_7.png"), text: "", choices: [{ label: "Continue", next: "t8" }] },
+      { id: "t8", image: withBase("assets/main_events/turning_tide_8.png"), text: "", choices: [{ label: "Close" }] }
     ]
   }
 ];
