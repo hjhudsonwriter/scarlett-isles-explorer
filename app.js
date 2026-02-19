@@ -112,6 +112,19 @@ Will you go to it, or be carried by it?
         choices: [{ label: "Close" }]
       }
     ]
+  },
+      {
+    id: "turning_tide",
+    title: "The Turning Tide",
+    steps: [
+      { id: "start", image: withBase("assets/main_events/turning_tide_1.png"), text: "", choices: [{ label: "Continue", next: "t2" }] },
+      { id: "t2",    image: withBase("assets/main_events/turning_tide_2.png"), text: "", choices: [{ label: "Continue", next: "t3" }] },
+      { id: "t3",    image: withBase("assets/main_events/turning_tide_3.png"), text: "", choices: [{ label: "Continue", next: "t4" }] },
+      { id: "t4",    image: withBase("assets/main_events/turning_tide_4.png"), text: "", choices: [{ label: "Continue", next: "t5" }] },
+      { id: "t5",    image: withBase("assets/main_events/turning_tide_5.png"), text: "", choices: [{ label: "Continue", next: "t6" }] },
+      { id: "t6",    image: withBase("assets/main_events/turning_tide_6.png"), text: "", choices: [{ label: "Continue", next: "t7" }] },
+      { id: "t7",    image: withBase("assets/main_events/turning_tide_7.png"), text: "", choices: [{ label: "Close" }] }
+    ]
   }
 ];
 
@@ -621,15 +634,17 @@ function queueMainEvent(id){
   const ev = getMainEventById(id);
   if (!ev) return;
 
-  const dayNow = Number(state.travel?.day) || 1;
-  const dueInDays = 1 + Math.floor(Math.random() * 2); // 1–2 days
-  const dueDay = dayNow + dueInDays;
+  // Fire instantly
+  openEventModal("main", ev);
 
-  state.travel.forcedMainEvent = { id: ev.id, dueDay };
-  state.travel.forcedMainEventFired = false;
+  // Clear any previously queued main event state (keeps things tidy)
+  if (state.travel) {
+    state.travel.forcedMainEvent = null;
+    state.travel.forcedMainEventFired = false;
+  }
 
   saveNow();
-  setNotice(`Main Campaign event queued (due by Day ${dueDay}).`);
+  setNotice("Main Campaign event triggered.");
 }
 
 btnQueueMainEvent?.addEventListener("click", () => {
