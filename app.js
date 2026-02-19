@@ -154,49 +154,6 @@ function pickRandom(arr){
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-    // -------------------------------
-// Weather Events (manual roll input)
-// Max 1 every 3 days (cooldown)
-// -------------------------------
-const WEATHER_EVENTS = [
-  {
-    id: "cold_rain",
-    title: "Cold Rain",
-    kind: "rain",
-    text: "A cold rain settles in, needling through seams and straps. The road slicks, sounds carry oddly, and your pace becomes a negotiation.",
-    rollPrompt: "Enter the party’s Survival (or relevant) roll result:",
-    resolve(roll){
-      if (roll >= 18) return "You find shelter lines and keep spirits high. The rain becomes background noise, not a threat.";
-      if (roll >= 12) return "You push through. Clothes cling and boots squelch, but you hold the day together.";
-      return "The rain wins small battles all day. Shivering hands, soaked rations, and frayed patience. You arrive tired and damp to the bone.";
-    }
-  },
-  {
-    id: "black_storm",
-    title: "Black Storm",
-    kind: "storm",
-    text: "A storm front rolls over the Isles like a closing fist. Wind lashes the grass flat, and thunder prowls just beyond the hills.",
-    rollPrompt: "Enter the party’s Athletics/Survival roll result:",
-    resolve(roll){
-      if (roll >= 18) return "You read the storm’s rhythm and move between its teeth. No one is separated, nothing is lost.";
-      if (roll >= 12) return "You keep formation, but the storm taxes you. Progress is slow, and every decision feels heavier.";
-      return "The storm scatters you in moments. You regroup eventually, but something is lost to the wind, time, or both.";
-    }
-  },
-  {
-    id: "white_blizzard",
-    title: "White Blizzard",
-    kind: "blizzard",
-    text: "Snow comes suddenly, swallowing colour and distance. The world becomes a white corridor, and every breath feels borrowed.",
-    rollPrompt: "Enter the party’s Survival roll result:",
-    resolve(roll){
-      if (roll >= 18) return "You find the safe lines, mark your trail, and keep everyone moving. The blizzard passes without taking its due.";
-      if (roll >= 12) return "You endure. Visibility is poor and fingers go numb, but you don’t lose your way.";
-      return "The blizzard claims direction and time. You stumble into shelter late, drained, and uncertain how far you drifted.";
-    }
-  }
-];
-
 // -------------------------------
 // Weather Events (table roll input)
 // Max 1 every 3 days (cooldown)
