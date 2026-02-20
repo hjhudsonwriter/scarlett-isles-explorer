@@ -225,6 +225,33 @@ h1, h2, h3{
   inset:0;
 }
 
+/* Clickable map markers layer */
+.explorer-markers{
+  position: absolute;
+  inset: 0;
+  z-index: 15; /* above map, below tokens (tokens are interactive too) */
+  pointer-events: none; /* only marker buttons receive clicks */
+}
+
+.explorer-markerBtn{
+  position: absolute;
+  transform: translate(-50%, -100%);
+  pointer-events: auto;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.explorer-markerBtn img{
+  width: 34px;
+  height: 34px;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.45));
+}
+
+.explorer-markerBtn:hover img{
+  transform: scale(1.08);
+}
 .explorer-token{
   position:absolute;
   display:grid;
@@ -470,6 +497,93 @@ h1, h2, h3{
   z-index: 9999;
 }
 
+/* ================================
+   Submap (Marker) Modal
+================================== */
+.mkModal{
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 10000;
+}
+.mkModal.isOpen{ display:flex; }
+
+.mkModal_backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(6px);
+}
+
+.mkModal_card{
+  position: relative;
+  width: min(1100px, calc(100vw - 24px));
+  max-height: min(92vh, 980px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  border-radius: 22px;
+  border: 1px solid rgba(212,175,55,.35);
+  background: linear-gradient(180deg, rgba(20,6,10,.92), rgba(8,8,10,.92));
+  box-shadow: 0 20px 70px rgba(0,0,0,.65);
+  padding: 22px 24px;
+}
+
+.mkModal_top{
+  display:flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.mkModal_type{
+  font-size: 16px;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: rgba(212,175,55,.95);
+  font-weight: 900;
+}
+
+.mkModal_title{
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.1;
+  font-family: "Cinzel", serif;
+}
+
+.mkModal_media{
+  margin-top: 10px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(212,175,55,.25);
+  box-shadow: 0 14px 40px rgba(0,0,0,.35);
+}
+
+.mkModal_media img{
+  width: 100%;
+  height: auto;
+  max-height: 64vh;
+  object-fit: contain;
+  display: block;
+}
+
+.mkModal_desc{
+  margin-top: 14px;
+  font-size: 20px;
+  line-height: 1.35;
+  color: rgba(230,230,230,.95);
+}
+
+.mkModal_close{
+  font-size: 16px;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
 .evModal.isOpen{ display: flex; }
 
 .evModal_backdrop{
