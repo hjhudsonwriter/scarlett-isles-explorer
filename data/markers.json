@@ -1,69 +1,55 @@
 {
   "markersByMapId": {
-"the_east_isle": [
-  {
-  "id": "greymyr",
-  "label": "Greymyr",
-  "x": 0.609,
-  "y": 0.156,
-  "thumb": "assets/markers/marker_gold.png",
-  "submapImage": "assets/submaps/greymyr.png",
-  "description": ""
-},
-{
-  "id": "swyth",
-  "label": "Swyth",
-  "x": 0.530,
-  "y": 0.435,
-  "thumb": "assets/markers/marker_gold.png",
-  "submapImage": "assets/submaps/swyth.png",
-  "description": ""
-},
-{
-  "id": "port_brawdlyn",
-  "label": "Port Brawdlyn",
-  "x": 0.290,
-  "y": 0.803,
-  "thumb": "assets/markers/marker_gold.png",
-  "submapImage": "assets/submaps/port_brawdlyn.png",
-  "description": ""
-}
-],
 
-"the_north_isle": [
-  
-],
+    "the_east_isle": [
+      { "id": "swyth", "label": "Swyth", "x": 0.5076, "y": 0.4578, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "greymyr", "label": "Greymyr", "x": 0.5424, "y": 0.1024, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "port_brawdlyn", "label": "Port Brawdlyn", "x": 0.2276, "y": 0.8994, "description": "", "thumb": "", "submapImage": "" }
+    ],
 
-"northern_province_east": [
+    "the_north_isle": [
+      { "id": "bleakhold", "label": "The Bleakhold", "x": 0.5068, "y": 0.2629, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "bleakharbour", "label": "Bleakharbour", "x": 0.5721, "y": 0.4634, "description": "", "thumb": "", "submapImage": "" }
+    ],
 
-],
+    "midland_province": [
+      { "id": "middlemount", "label": "Middlemount", "x": 0.5244, "y": 0.188, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "pearlsmore", "label": "Pearlsmore", "x": 0.3407, "y": 0.3648, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "midacre", "label": "Midacre", "x": 0.1815, "y": 0.0792, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "colver", "label": "Colver", "x": 0.5179, "y": 0.6864, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "standish", "label": "Standish", "x": 0.8562, "y": 0.3052, "description": "", "thumb": "", "submapImage": "" }
+    ],
 
-"northern_province_west": [
+    "eastern_province_north": [
+      { "id": "wyre", "label": "Wyre", "x": 0.5173, "y": 0.5364, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "slades_muster", "label": "Slade’s Muster", "x": 0.7778, "y": 0.8867, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "randock_farm", "label": "Randock Farm", "x": 0.5309, "y": 0.1809, "description": "", "thumb": "", "submapImage": "" }
+    ],
 
-],
+    "eastern_province_south": [
+      { "id": "moorcastle", "label": "Moorcastle", "x": 0.4802, "y": 0.3227, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "steelport", "label": "Steelport", "x": 0.684, "y": 0.634, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "alum_rest", "label": "Alum Rest", "x": 0.2049, "y": 0.1367, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "bretan", "label": "Bretan", "x": 0.3833, "y": 0.6576, "description": "", "thumb": "", "submapImage": "" }
+    ],
 
-"midland_province": [
+    "southern_province_east": [
+      { "id": "moltenport", "label": "Moltenport", "x": 0.7944, "y": 0.9021, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "cassmead", "label": "Cassmead", "x": 0.1537, "y": 0.2004, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "lowland_farm", "label": "Lowland Farm", "x": 0.3154, "y": 0.073, "description": "", "thumb": "", "submapImage": "" }
+    ],
 
-],
+    "southern_province_west": [
+      { "id": "fork_farm", "label": "Fork Farm", "x": 0.1667, "y": 0.7049, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "goldport", "label": "Goldport", "x": 0.6352, "y": 0.6237, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "city_of_coin", "label": "The City of Coin", "x": 0.7136, "y": 0.0915, "description": "", "thumb": "", "submapImage": "" }
+    ],
 
-"western_province": [
-
-],
-
-"southern_province_east": [
-
-],
-
-"southern_province": [
-
-],
-
-"eastern_province_north": [
-
-],
-
-"eastern_province_south": [
-
+    "western_province_south": [
+      { "id": "westreach", "label": "Westreach", "x": 0.4358, "y": 0.5775, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "shadowhall", "label": "Shadowhall", "x": 0.4654, "y": 0.0607, "description": "", "thumb": "", "submapImage": "" },
+      { "id": "redport", "label": "Redport", "x": 0.2222, "y": 0.4778, "description": "", "thumb": "", "submapImage": "" }
     ]
+
   }
-}  
+}
