@@ -76,6 +76,21 @@ function mapIdToProvinceId(mapId){
 // Explorer Events (data/events.json)
 // -------------------------------
 const EVENTS_URL = withBase("data/events.json");
+    const MARKERS_URL = withBase("data/markers.json");
+let MARKER_DB = null;
+
+async function loadMarkerDb(){
+  try{
+    const res = await fetch(MARKERS_URL, { cache: "no-cache" });
+    if(!res.ok) throw new Error(`Failed to load markers.json (${res.status})`);
+    MARKER_DB = await res.json();
+    return MARKER_DB;
+  }catch(err){
+    console.warn("Markers DB failed to load:", err);
+    MARKER_DB = null;
+    return null;
+  }
+}
 
     // -------------------------------
 // Main Campaign (forced) events
@@ -597,15 +612,6 @@ function renderExplorer() {
 
 </div> <!-- end explorer-fswrap -->
 </div> <!-- end explorer-wrap -->
-
-
-    <div class="evModal_desc" id="evDesc">—</div>
-    <div class="evModal_prompt" id="evPrompt" style="display:none;"></div>
-
-    <div class="evChoices" id="evChoices"></div>
-  </div>
-</div>
-</div> <!-- end explorer-wrap -->
   `;
 
 
@@ -710,6 +716,15 @@ const evDesc = root.querySelector("#evDesc");
 const evMedia = root.querySelector("#evMedia");
 const evPrompt = root.querySelector("#evPrompt");
 const evChoices = root.querySelector("#evChoices");
+
+// Marker modal elements
+const mkModal = root.querySelector("#mkModal");
+const mkBackdrop = root.querySelector("#mkBackdrop");
+const mkClose = root.querySelector("#mkClose");
+const mkMeta = root.querySelector("#mkMeta");
+const mkTitle = root.querySelector("#mkTitle");
+const mkDesc = root.querySelector("#mkDesc");
+const mkMedia = root.querySelector("#mkMedia");    
 
   function stripAmbientLine(text){
   if(!text) return text;
@@ -1011,9 +1026,33 @@ Enter the final table roll result below to resolve the weather’s effect.`,
   evModal.setAttribute("aria-hidden", "true");
 }
 
+    function openMarkerModal(marker){
+  if(!mkModal) return;
+
+  mkMeta.textContent = "Location";
+  mkTitle.textContent = marker?.label || "Location";
+  mkDesc.textContent = marker?.description ? String(marker.description) : "";
+
+  const img = marker?.submapImage ? String(marker.submapImage) : "";
+  if (mkMedia) {
+    mkMedia.innerHTML = img ? `<img src="${withBase(img)}" alt="">` : "";
+  }
+
+  mkModal.classList.add("isOpen");
+  mkModal.setAttribute("aria-hidden", "false");
+}
+
+function closeMarkerModal(){
+  if(!mkModal) return;
+  mkModal.classList.remove("isOpen");
+  mkModal.setAttribute("aria-hidden", "true");
+}
+
 // Close modal
 evClose?.addEventListener("click", closeEventModal);
 evBackdrop?.addEventListener("click", closeEventModal);
+mkClose?.addEventListener("click", closeMarkerModal);
+mkBackdrop?.addEventListener("click", closeMarkerModal);    
 
 
   const btnTokSm = root.querySelector("#explorerTokSm");
@@ -1026,6 +1065,7 @@ evBackdrop?.addEventListener("click", closeEventModal);
   const fsWrap = root.querySelector("#explorerFsWrap");
   const world = root.querySelector("#explorerWorld");
   const mapImg = root.querySelector("#explorerMap");
+    const markerLayer = root.querySelector("#explorerMarkers");
   const gridCanvas = root.querySelector("#explorerGrid");
   const tokenLayer = root.querySelector("#explorerTokens");
   tokenLayer.style.touchAction = "none";
@@ -1761,6 +1801,35 @@ if (state.snap.enabled) {
   if(p && typeof p.catch === "function") p.catch(()=>{ /* ignore autoplay restrictions */ });
 }
 
+    function renderMarkers(){
+  if(!markerLayer) return;
+
+  markerLayer.innerHTML = "";
+
+  const mapId = state.mapPresetId || "";
+  if(!mapId) return; // only show markers on preset maps (safe & simple)
+
+  const list = MARKER_DB?.markersByMapId?.[mapId];
+  if(!Array.isArray(list) || !list.length) return;
+
+  list.forEach(m => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "explorer-markerBtn";
+    btn.style.left = `${(Number(m.x) || 0) * 100}%`;
+    btn.style.top  = `${(Number(m.y) || 0) * 100}%`;
+
+    const thumb = m.thumb ? withBase(String(m.thumb)) : "";
+    btn.innerHTML = thumb ? `<img src="${thumb}" alt="">` : `<span style="font-size:28px;">✦</span>`;
+
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openMarkerModal(m);
+    });
+
+    markerLayer.appendChild(btn);
+  });
+}
     function rerenderAll() {
     // Map
     // Map: uploaded map overrides preset map
@@ -1783,6 +1852,7 @@ if (state.mapDataUrl) {
 
     // Draw + tokens
     drawHexGrid();
+    renderMarkers();    
     renderTokens();
     updateTravelUI();
     applyWeatherOverlay();    
@@ -1794,6 +1864,7 @@ if (state.mapDataUrl) {
     updateFreeMoveUI();
   // Load events in the background
 loadEventDb();
+    loadMarkerDb().then(() => renderMarkers());
 
 // Province dropdown initial value + saving
 if (provinceSel) {
