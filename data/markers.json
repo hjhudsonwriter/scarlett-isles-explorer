@@ -1,27 +1,69 @@
 {
   "markersByMapId": {
-    "northern_province_east": [
-      {
-        "id": "nightwood_city",
-        "label": "Nightwood City",
-        "x": 0.62,
-        "y": 0.38,
-        "thumb": "assets/markers/marker_gold.png",
-        "submapImage": "assets/submaps/nightwood_city.png",
-        "description": "A dense ring-city beneath black boughs."
-      }
-    ],
+"the_east_isle": [
+  {
+  "id": "greymyr",
+  "label": "Greymyr",
+  "x": 0.609,
+  "y": 0.156,
+  "thumb": "assets/markers/marker_gold.png",
+  "submapImage": "assets/submaps/greymyr.png",
+  "description": ""
+},
+{
+  "id": "swyth",
+  "label": "Swyth",
+  "x": 0.530,
+  "y": 0.435,
+  "thumb": "assets/markers/marker_gold.png",
+  "submapImage": "assets/submaps/swyth.png",
+  "description": ""
+},
+{
+  "id": "port_brawdlyn",
+  "label": "Port Brawdlyn",
+  "x": 0.290,
+  "y": 0.803,
+  "thumb": "assets/markers/marker_gold.png",
+  "submapImage": "assets/submaps/port_brawdlyn.png",
+  "description": ""
+}
+],
 
-    "the_east_isle": [
-      {
-        "id": "rowthorn_hold",
-        "label": "Rowthorn Hold",
-        "x": 0.42,
-        "y": 0.54,
-        "thumb": "assets/markers/marker_gold.png",
-        "submapImage": "assets/submaps/rowthorn_hold.png",
-        "description": "A hillfast of thornwood and sea-wind."
-      }
+"the_north_isle": [
+  
+],
+
+"northern_province_east": [
+
+],
+
+"northern_province_west": [
+
+],
+
+"midland_province": [
+
+],
+
+"western_province": [
+
+],
+
+"southern_province_east": [
+
+],
+
+"southern_province": [
+
+],
+
+"eastern_province_north": [
+
+],
+
+"eastern_province_south": [
+
     ]
   }
-}
+}  
