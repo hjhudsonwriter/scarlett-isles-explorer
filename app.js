@@ -416,7 +416,15 @@ function renderExplorer() {
     window.__explorerCleanup = null;
   }
 
-
+function copyText(txt){
+  // Clipboard works only on HTTPS + user gesture; fallback to prompt
+  try {
+    navigator.clipboard.writeText(txt).catch(()=>{});
+  } catch(e) {}
+  // Always provide a visible fallback
+  window.prompt("Copy these x,y values:", txt);
+}
+    
   // Build UI
   view.innerHTML = `
           <div class="explorer-head">
@@ -461,6 +469,7 @@ function renderExplorer() {
         <button class="btn ghost" id="explorerFogToggle" type="button">Fog of War: Off</button>
         <button class="btn ghost" id="explorerFogReset" type="button">Reset Fog</button>
         <button class="btn ghost" id="explorerSnapToggle" type="button">Snap: Off</button>
+        <button class="btn ghost" id="explorerPickXY" type="button">Pick Marker XY: Off</button>
         <span class="explorer-divider"></span>
 <button class="btn ghost" id="explorerExportSave" type="button">Export Save</button>
 <button class="btn ghost" id="explorerImportSave" type="button">Import Save</button>
@@ -1065,14 +1074,8 @@ mkBackdrop?.addEventListener("click", closeMarkerModal);
   const fsWrap = root.querySelector("#explorerFsWrap");
   const world = root.querySelector("#explorerWorld");
   const mapImg = root.querySelector("#explorerMap");
-    // ===== TEMP MARKER PLACEMENT MODE =====
-// Click map to print normalized x/y in console
-mapImg.addEventListener("click", function(e){
-  const rect = mapImg.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / rect.width;
-  const y = (e.clientY - rect.top) / rect.height;
-  console.log("COPY THESE VALUES:", x.toFixed(4), y.toFixed(4));
-});
+   const btnPickXY = root.querySelector("#explorerPickXY");
+let pickXYEnabled = false;
     const markerLayer = root.querySelector("#explorerMarkers");
   const gridCanvas = root.querySelector("#explorerGrid");
   const tokenLayer = root.querySelector("#explorerTokens");
@@ -1459,7 +1462,16 @@ function updateFogFromFocus(){
   btnFogToggle.classList.toggle("ghost", !state.fog?.enabled);
 }
 
-btnFogToggle?.addEventListener("click", () => {
+btnPickXY?.addEventListener("click", () => {
+  pickXYEnabled = !pickXYEnabled;
+  btnPickXY.textContent = `Pick Marker XY: ${pickXYEnabled ? "On" : "Off"}`;
+  setNotice(pickXYEnabled
+    ? "Pick mode ON: click the map where you want the marker."
+    : "Pick mode OFF."
+  );
+});
+    
+    btnFogToggle?.addEventListener("click", () => {
   if (!state.fog) state.fog = { enabled:false, revealedByMapKey:{} };
   state.fog.enabled = !state.fog.enabled;
   updateFogToggleUI();
