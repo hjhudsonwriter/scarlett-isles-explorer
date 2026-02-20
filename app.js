@@ -1065,6 +1065,14 @@ mkBackdrop?.addEventListener("click", closeMarkerModal);
   const fsWrap = root.querySelector("#explorerFsWrap");
   const world = root.querySelector("#explorerWorld");
   const mapImg = root.querySelector("#explorerMap");
+    // ===== TEMP MARKER PLACEMENT MODE =====
+// Click map to print normalized x/y in console
+mapImg.addEventListener("click", function(e){
+  const rect = mapImg.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width;
+  const y = (e.clientY - rect.top) / rect.height;
+  console.log("COPY THESE VALUES:", x.toFixed(4), y.toFixed(4));
+});
     const markerLayer = root.querySelector("#explorerMarkers");
   const gridCanvas = root.querySelector("#explorerGrid");
   const tokenLayer = root.querySelector("#explorerTokens");
