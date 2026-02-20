@@ -502,6 +502,7 @@ function renderExplorer() {
       <div class="explorer-stage" id="explorerStage">
         <div class="explorer-world" id="explorerWorld">
           <img id="explorerMap" class="explorer-map" alt="Map" />
+          <div id="explorerMarkers" class="explorer-markers"></div>
 <canvas id="explorerFog" class="explorer-fog"></canvas>
 <video id="explorerWeatherVideo" class="explorer-weatherVideo" muted playsinline loop></video>
 <canvas id="explorerGrid" class="explorer-grid"></canvas>
@@ -573,6 +574,24 @@ function renderExplorer() {
 <div class="evModal_desc" id="evDesc">—</div>
 <div class="evModal_prompt" id="evPrompt" style="display:none;"></div>
 <div class="evChoices" id="evChoices"></div>
+  </div>
+</div>
+
+<!-- Submap (clickable marker) modal -->
+<div class="mkModal" id="mkModal" aria-hidden="true">
+  <div class="mkModal_backdrop" id="mkBackdrop"></div>
+
+  <div class="mkModal_card" role="dialog" aria-modal="true" aria-labelledby="mkTitle">
+    <div class="mkModal_top">
+      <div>
+        <div class="mkModal_type" id="mkMeta">Location</div>
+        <h3 class="mkModal_title" id="mkTitle">—</h3>
+      </div>
+      <button class="btn ghost mkModal_close" id="mkClose" type="button">Close</button>
+    </div>
+
+    <div class="mkModal_media" id="mkMedia"></div>
+    <div class="mkModal_desc" id="mkDesc"></div>
   </div>
 </div>
 
