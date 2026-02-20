@@ -1471,6 +1471,37 @@ btnPickXY?.addEventListener("click", () => {
   );
 });
     
+    // -------------------------------
+// PICK MARKER XY CLICK HANDLER
+// -------------------------------
+stage.addEventListener("pointerdown", (e) => {
+
+  if (!pickXYEnabled) return;
+
+  // Ignore clicks on tokens or markers
+  if (e.target.closest(".explorer-token")) return;
+  if (e.target.closest(".explorer-markerBtn")) return;
+
+  const rect = stage.getBoundingClientRect();
+
+  const px = e.clientX - rect.left;
+  const py = e.clientY - rect.top;
+
+  const { w, h } = stageDims();
+
+  const nx = px / w;
+  const ny = py / h;
+
+  const roundedX = Number(nx.toFixed(4));
+  const roundedY = Number(ny.toFixed(4));
+
+  const result = `"x": ${roundedX}, "y": ${roundedY}`;
+
+  copyText(result);
+
+  setNotice(`Copied: ${result}`);
+});
+    
     btnFogToggle?.addEventListener("click", () => {
   if (!state.fog) state.fog = { enabled:false, revealedByMapKey:{} };
   state.fog.enabled = !state.fog.enabled;
