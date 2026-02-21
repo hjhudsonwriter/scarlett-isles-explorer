@@ -38,6 +38,18 @@
       { "id": "lowland_farm", "label": "Lowland Farm", "x": 0.3154, "y": 0.073, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
     ],
 
+    "northern_province_east": [
+      { "id": "alderbridge", "label": "Alderbridge", "x": 0.7944, "y": 0.9021, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/alderbridge.png" },
+      { "id": "wolfhaven", "label": "Wolfhaven", "x": 0.1537, "y": 0.2004, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
+      { "id": "sodden", "label": "Sodden", "x": 0.3154, "y": 0.073, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
+    ],
+
+    "northern_province_west": [
+      { "id": "nightwood", "label": "Nightwood", "x": 0.7944, "y": 0.9021, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/nightwood.png" },
+      { "id": "lokken", "label": "Lokken", "x": 0.1537, "y": 0.2004, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
+      { "id": "timberport", "label": "Timberport", "x": 0.3154, "y": 0.073, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
+    ],
+    
     "southern_province_west": [
       { "id": "fork_farm", "label": "Fork Farm", "x": 0.1667, "y": 0.7049, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
       { "id": "goldport", "label": "Goldport", "x": 0.6352, "y": 0.6237, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/goldport.png" },
