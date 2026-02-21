@@ -221,8 +221,9 @@ h1, h2, h3{
 }
 
 .explorer-tokens{
-  position:absolute;
-  inset:0;
+  position: absolute;
+  inset: 0;
+  z-index: ...
 }
 
 /* Clickable map markers layer */
@@ -264,6 +265,7 @@ h1, h2, h3{
   font-weight: 900;
   user-select:none;
   touch-action:none;
+   pointer-events: auto;
   cursor: grab;
 }
 
