@@ -2338,6 +2338,12 @@ btnResetTravel?.addEventListener("click", () => {
   stage.addEventListener("pointerdown", (e) => {
     // If clicking on a token, token handler will manage it
     if (e.target.closest(".explorer-token")) return;
+      
+      // If clicking on a marker pin, let the marker click open the submap modal
+    if (e.target.closest(".explorer-markerBtn")) return;
+
+    marqueeActive = true;
+    marquee.hidden = false;
 
 
     marqueeActive = true;
