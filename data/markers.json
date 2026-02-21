@@ -1,19 +1,18 @@
 {
   "markersByMapId": {
-
     "the_east_isle": [
       { "id": "swyth", "label": "Swyth", "x": 0.5076, "y": 0.4578, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
-      { "id": "greymyr", "label": "Greymyr", "x": 0.5424, "y": 0.1024, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
+      { "id": "greymyr", "label": "Greymyr", "x": 0.5424, "y": 0.1024, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/greymyr.png" },
       { "id": "port_brawdlyn", "label": "Port Brawdlyn", "x": 0.2276, "y": 0.8994, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
     ],
 
     "the_north_isle": [
-      { "id": "bleakhold", "label": "The Bleakhold", "x": 0.5068, "y": 0.2629, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
-      { "id": "bleakharbour", "label": "Bleakharbour", "x": 0.5721, "y": 0.4634, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
+      { "id": "bleakhold", "label": "The Bleakhold", "x": 0.5068, "y": 0.2629, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/the_bleakhold.png" },
+      { "id": "bleakharbour", "label": "Bleakharbour", "x": 0.5721, "y": 0.4634, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/bleakharbour.png" }
     ],
 
     "midland_province": [
-      { "id": "middlemount", "label": "Middlemount", "x": 0.5244, "y": 0.188, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
+      { "id": "middlemount", "label": "Middlemount", "x": 0.5244, "y": 0.188, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/middlemount.png" },
       { "id": "pearlsmore", "label": "Pearlsmore", "x": 0.3407, "y": 0.3648, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
       { "id": "midacre", "label": "Midacre", "x": 0.1815, "y": 0.0792, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
       { "id": "colver", "label": "Colver", "x": 0.5179, "y": 0.6864, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
@@ -41,7 +40,7 @@
 
     "southern_province_west": [
       { "id": "fork_farm", "label": "Fork Farm", "x": 0.1667, "y": 0.7049, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
-      { "id": "goldport", "label": "Goldport", "x": 0.6352, "y": 0.6237, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
+      { "id": "goldport", "label": "Goldport", "x": 0.6352, "y": 0.6237, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/goldport.png" },
       { "id": "city_of_coin", "label": "The City of Coin", "x": 0.7136, "y": 0.0915, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
     ],
 
@@ -50,6 +49,5 @@
       { "id": "shadowhall", "label": "Shadowhall", "x": 0.4654, "y": 0.0607, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
       { "id": "redport", "label": "Redport", "x": 0.2222, "y": 0.4778, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
     ]
-
   }
 }
