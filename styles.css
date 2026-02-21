@@ -223,6 +223,7 @@ h1, h2, h3{
 .explorer-tokens{
   position: absolute;
   inset: 0;
+  pointer-events: none; 
   z-index: ...
 }
 
@@ -230,8 +231,8 @@ h1, h2, h3{
 .explorer-markers{
   position: absolute;
   inset: 0;
-  z-index: 15; /* above map, below tokens (tokens are interactive too) */
-  pointer-events: none; /* only marker buttons receive clicks */
+  z-index: 9998;         /* TOP, even in fullscreen stacking */
+  pointer-events: none;  /* layer ignores clicks, buttons handle them */
 }
 
 .explorer-markerBtn{
@@ -288,7 +289,7 @@ h1, h2, h3{
   background: rgba(201,162,39,0.12);
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.35);
   border-radius: 10px;
-  pointer-events:none;
+  pointer-events: none;
 }
 /* Fullscreen wrapper: controls stay visible */
 .explorer-fswrap{
