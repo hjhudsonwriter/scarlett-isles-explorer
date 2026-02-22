@@ -1,7 +1,7 @@
 {
   "markersByMapId": {
     "the_east_isle": [
-      { "id": "swyth", "label": "Swyth", "x": 0.5076, "y": 0.4578, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
+      { "id": "swyth", "label": "Swyth", "x": 0.5076, "y": 0.4578, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/swyth.png" },
       { "id": "greymyr", "label": "Greymyr", "x": 0.5424, "y": 0.1024, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/greymyr.png" },
       { "id": "port_brawdlyn", "label": "Port Brawdlyn", "x": 0.2276, "y": 0.8994, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
     ],
@@ -21,15 +21,15 @@
 
     "eastern_province_north": [
       { "id": "wyre", "label": "Wyre", "x": 0.5173, "y": 0.5364, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
-      { "id": "slades_muster", "label": "Slade’s Muster", "x": 0.7778, "y": 0.8867, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
+      { "id": "slades_muster", "label": "Slade’s Muster", "x": 0.7778, "y": 0.8867, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/slades_muster.png" },
       { "id": "randock_farm", "label": "Randock Farm", "x": 0.5309, "y": 0.1809, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
     ],
 
     "eastern_province_south": [
-      { "id": "moorcastle", "label": "Moorcastle", "x": 0.4802, "y": 0.3227, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
+      { "id": "moorcastle", "label": "Moorcastle", "x": 0.4802, "y": 0.3227, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/moorcastle.png" },
       { "id": "steelport", "label": "Steelport", "x": 0.684, "y": 0.634, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
       { "id": "alum_rest", "label": "Alum Rest", "x": 0.2049, "y": 0.1367, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
-      { "id": "bretan", "label": "Bretan", "x": 0.3833, "y": 0.6576, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
+      { "id": "bretan", "label": "Bretan", "x": 0.3833, "y": 0.6576, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/bretan.png" }
     ],
 
     "southern_province_east": [
@@ -40,20 +40,20 @@
 
     "northern_province_east": [
       { "id": "alderbridge", "label": "Alderbridge", "x": 0.1788, "y": 0.6246, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/alderbridge.png" },
-      { "id": "wolfhaven", "label": "Wolfhaven", "x": 0.4975, "y": 0.2754, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
+      { "id": "wolfhaven", "label": "Wolfhaven", "x": 0.4975, "y": 0.2754, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/wolfhaven.png" },
       { "id": "sodden", "label": "Sodden", "x": 0.1562, "y": 0.9299, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
     ],
 
     "northern_province_west": [
       { "id": "nightwood", "label": "Nightwood", "x": 0.4352, "y": 0.372, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/nightwood.png" },
       { "id": "lokken", "label": "Lokken", "x": 0.1877, "y": 0.2662, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
-      { "id": "timberport", "label": "Timberport", "x": 0.2636, "y": 0.0648, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
+      { "id": "timberport", "label": "Timberport", "x": 0.2636, "y": 0.0648, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/timberport.png" }
     ],
     
     "southern_province_west": [
       { "id": "fork_farm", "label": "Fork Farm", "x": 0.1667, "y": 0.7049, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" },
       { "id": "goldport", "label": "Goldport", "x": 0.6352, "y": 0.6237, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/goldport.png" },
-      { "id": "city_of_coin", "label": "The City of Coin", "x": 0.7136, "y": 0.0915, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
+      { "id": "city_of_coin", "label": "The City of Coin", "x": 0.7136, "y": 0.0915, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/the_city_of_coin.png" }
     ],
 
     "western_province_south": [
