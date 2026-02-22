@@ -8,7 +8,7 @@
 
     "the_north_isle": [
       { "id": "bleakhold", "label": "The Bleakhold", "x": 0.5068, "y": 0.2629, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/the_bleakhold.png" },
-      { "id": "bleakharbour", "label": "Bleakharbour", "x": 0.5721, "y": 0.4634, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/bleakharbour.png" }
+      { "id": "bleakharbour", "label": "Bleakharbour", "x": 0.5721, "y": 0.4634, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/bleakharbour.png" },
       { "id": "coldpass", "label": "Coldpass", "x": 0.692, "y": 0.6833, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/coldpass.png" }
     ],
 
