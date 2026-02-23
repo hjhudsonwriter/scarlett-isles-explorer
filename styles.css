@@ -205,6 +205,7 @@ h1, h2, h3{
 .explorer-fog{
   position:absolute;
   inset:0;
+  z-index: 16;
   pointer-events:none;
 }
 
@@ -231,7 +232,7 @@ h1, h2, h3{
 .explorer-markers{
   position: absolute;
   inset: 0;
-  z-index: 9998;         /* TOP, even in fullscreen stacking */
+  z-index: 14;         /* TOP, even in fullscreen stacking */
   pointer-events: none;  /* layer ignores clicks, buttons handle them */
 }
 
