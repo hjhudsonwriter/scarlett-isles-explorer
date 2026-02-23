@@ -1890,7 +1890,7 @@ const filtered = list.filter(m => {
   return true;
 });
 
-  list.forEach(m => {
+  filtered.forEach(m => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "explorer-markerBtn";
