@@ -224,8 +224,8 @@ h1, h2, h3{
 .explorer-tokens{
   position: absolute;
   inset: 0;
-  pointer-events: none; 
-  z-index: ...
+  pointer-events: none;
+  z-index: 18;
 }
 
 /* Clickable map markers layer */
