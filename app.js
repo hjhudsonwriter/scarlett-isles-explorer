@@ -149,31 +149,31 @@ function getTokenCentroid(tokens){
   return { x: sx / tokens.length, y: sy / tokens.length };
 }
 
-function applyPartySpawnWithFormation(spawnX, spawnY){
-  if(!state?.tokens || state.tokens.length === 0) return;
+function applyPartySpawnWithFormation(s, spawnX, spawnY){
+  if(!s?.tokens || s.tokens.length === 0) return;
 
   // Preserve relative spacing/formation
-  const centroid = getTokenCentroid(state.tokens);
-  const offsets = state.tokens.map(t => ({
+  const centroid = getTokenCentroid(s.tokens);
+  const offsets = s.tokens.map(t => ({
     id: t.id,
     dx: (t.x - centroid.x),
     dy: (t.y - centroid.y)
   }));
 
   // Apply new centroid at spawn point
-  for(const t of state.tokens){
+  for(const t of s.tokens){
     const off = offsets.find(o => o.id === t.id) || { dx: 0, dy: 0 };
     t.x = clamp01(spawnX + off.dx);
     t.y = clamp01(spawnY + off.dy);
   }
 }
 
-function tryApplyMapTransitionSpawn(fromMapId, toMapId){
+function tryApplyMapTransitionSpawn(s, fromMapId, toMapId){
   if(!fromMapId || !toMapId) return false;
   const entry = MAP_TRANSITION_SPAWNS?.[fromMapId]?.[toMapId];
   if(!entry) return false;
 
-  applyPartySpawnWithFormation(entry.x, entry.y);
+  applyPartySpawnWithFormation(s, entry.x, entry.y);
   return true;
 }
     // -------------------------------
@@ -2168,8 +2168,8 @@ btnSnapToggle.addEventListener("click", () => {
   // Auto-set province for events
   state.travel.provinceId = mapIdToProvinceId(preset.id);
   // NEW: if this map change matches a defined transition, spawn party accordingly
-  tryApplyMapTransitionSpawn(fromMapId, preset.id);
-
+  tryApplyMapTransitionSpawn(state, fromMapId, preset.id);
+      
   saveNow();
   rerenderAll();
   setNotice(`Map loaded: ${preset.id} • Events: ${state.travel.provinceId}`);
@@ -2617,7 +2617,7 @@ drag.ids.forEach(tokId => {
   });
 
 
-  tokenLayer.addEventListener("pointermove", (e) => {
+  function onTokenPointerMove(e){
   if (!drag) return;
 
 
@@ -2742,7 +2742,7 @@ if (state.fog?.enabled) {
     drawFog();
   }
 }
-});
+}
   
   function onTokenPointerUp() {
   if (!drag) return;
@@ -2872,6 +2872,8 @@ if (state.travel.travelEventDay !== dayNow) {
 
 tokenLayer.addEventListener("pointerup", onTokenPointerUp);
 window.addEventListener("pointerup", onTokenPointerUp);
+tokenLayer.addEventListener("pointermove", onTokenPointerMove);
+window.addEventListener("pointermove", onTokenPointerMove);   
 
 
   // Optional: mouse wheel to resize selected tokens (hover token)
@@ -2897,6 +2899,8 @@ window.__explorerCleanup = () => {
   window.removeEventListener("keydown", onKeyToggleUi);
   window.removeEventListener("pointerup", onTokenPointerUp);
   tokenLayer.removeEventListener("pointerup", onTokenPointerUp);
+  window.removeEventListener("pointermove", onTokenPointerMove);
+  tokenLayer.removeEventListener("pointermove", onTokenPointerMove);  
 };
 }
 
