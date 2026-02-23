@@ -2168,11 +2168,17 @@ btnSnapToggle.addEventListener("click", () => {
   // Auto-set province for events
   state.travel.provinceId = mapIdToProvinceId(preset.id);
   // NEW: if this map change matches a defined transition, spawn party accordingly
-  tryApplyMapTransitionSpawn(state, fromMapId, preset.id);
+    const didSpawn = tryApplyMapTransitionSpawn(state, fromMapId, preset.id);
+
+  // If we spawned, immediately update fog reveal + redraw markers
+  if(didSpawn){
+    updateFogFromFocus?.();
+    renderMarkers?.();
+  }
       
   saveNow();
   rerenderAll();
-  setNotice(`Map loaded: ${preset.id} • Events: ${state.travel.provinceId}`);
+  setNotice(`Map loaded: ${preset.id} • Events: ${state.travel.provinceId}${(typeof didSpawn !== "undefined" && didSpawn) ? " • Spawn applied" : ""}`);
 }
   mapUpload.addEventListener("change", onMapUpload);
   btnClear.addEventListener("click", onClearMap);
