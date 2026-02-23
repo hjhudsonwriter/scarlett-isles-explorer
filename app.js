@@ -1346,6 +1346,21 @@ function ensureFogStore(){
   if (!state.fog.revealedByMapKey[key]) state.fog.revealedByMapKey[key] = {};
   return state.fog.revealedByMapKey[key];
 }
+    function markerIsRevealedByFog(m){
+  // If fog is off, everything is “revealed”
+  if (!state.fog?.enabled) return true;
+
+  // If fog is on, only show markers whose hex has been revealed on this map
+  const store = ensureFogStore();
+  const { w, h } = stageDims();
+
+  // marker coords are normalized (0..1)
+  const px = m.x * w;
+  const py = m.y * h;
+
+  const a = axialRound(pixelToAxial(px, py));
+  return !!store[`${a.q},${a.r}`];
+}
 
 function revealAxialRadius(center, radius = 2){
   if (!center || !Number.isFinite(center.q) || !Number.isFinite(center.r)) return;
@@ -1454,6 +1469,7 @@ function updateFogFromFocus(){
   revealAxialRadius(a, 2);
   saveNow();
   drawFog();
+    renderMarkers();
 }
 
     function updateFogToggleUI(){
@@ -1862,6 +1878,17 @@ if (state.snap.enabled) {
 
   const list = MARKER_DB?.markersByMapId?.[mapId];
   if(!Array.isArray(list) || !list.length) return;
+
+        // Hide “empty” markers (no submap image), and hide markers in fogged areas
+const filtered = list.filter(m => {
+  // 1) no submap image = don’t render marker at all
+  if (!m.submapImage || !String(m.submapImage).trim()) return false;
+
+  // 2) if fog is on, only render if that hex has been revealed
+  if (!markerIsRevealedByFog(m)) return false;
+
+  return true;
+});
 
   list.forEach(m => {
     const btn = document.createElement("button");
