@@ -72,6 +72,110 @@ function mapIdToProvinceId(mapId){
   // Fallback
   return "northern_province";
 }
+    // -------------------------------------------
+// Map transition spawn points (normalized x/y)
+// Preserve party formation from previous map.
+// -------------------------------------------
+const MAP_TRANSITION_SPAWNS = {
+  // From Eastern Province (North)
+  eastern_province_north: {
+    eastern_province_south: { x: 0.3741, y: 0.0278 },
+    the_east_isle:          { x: 0.1864, y: 0.4932 }
+  },
+
+  // From Eastern Province (South)
+  eastern_province_south: {
+    eastern_province_north:      { x: 0.2994, y: 0.9658 },
+    southern_province_east:      { x: 0.8833, y: 0.8076 }
+  },
+
+  // From The East Isle
+  the_east_isle: {
+    eastern_province_south: { x: 0.8710, y: 0.3443 }
+  },
+
+  // From Southern Province (East)
+  southern_province_east: {
+    southern_province_west: { x: 0.8327, y: 0.0196 },
+    midland_province:       { x: 0.1494, y: 0.6761 }
+  },
+
+  // From Southern Province (West)
+  southern_province_west: {
+    southern_province_east:     { x: 0.1117, y: 0.2826 },
+    western_province_south:     { x: 0.3667, y: 0.9699 }
+  },
+
+  // From Midland Province
+  midland_province: {
+    southern_province_east:     { x: 0.3049, y: 0.0186 },
+    northern_province_west:     { x: 0.7963, y: 0.9597 }
+  },
+
+  // From Northern Province (East)
+  northern_province_east: {
+    northern_province_west: { x: 0.8735, y: 0.4686 },
+    the_north_isle:         { x: 0.6858, y: 0.9782 }
+  },
+
+  // From Northern Province (West)
+  northern_province_west: {
+    northern_province_east: { x: 0.1074, y: 0.3823 },
+    midland_province:       { x: 0.2278, y: 0.0165 }
+  },
+
+  // From The North Isle
+  the_north_isle: {
+    northern_province_east: { x: 0.8358, y: 0.0638 }
+  },
+
+  // From Western Province (South)
+  western_province_south: {
+    southern_province_west: { x: 0.5981, y: 0.0227 }
+  }
+};
+
+function clamp01(n){
+  return Math.max(0, Math.min(1, n));
+}
+
+function getTokenCentroid(tokens){
+  if(!Array.isArray(tokens) || tokens.length === 0) return { x: 0.5, y: 0.5 };
+  let sx = 0, sy = 0;
+  for(const t of tokens){
+    sx += (typeof t.x === "number" ? t.x : 0.5);
+    sy += (typeof t.y === "number" ? t.y : 0.5);
+  }
+  return { x: sx / tokens.length, y: sy / tokens.length };
+}
+
+function applyPartySpawnWithFormation(spawnX, spawnY){
+  if(!state?.tokens || state.tokens.length === 0) return;
+
+  // Preserve relative spacing/formation
+  const centroid = getTokenCentroid(state.tokens);
+  const offsets = state.tokens.map(t => ({
+    id: t.id,
+    dx: (t.x - centroid.x),
+    dy: (t.y - centroid.y)
+  }));
+
+  // Apply new centroid at spawn point
+  for(const t of state.tokens){
+    const off = offsets.find(o => o.id === t.id) || { dx: 0, dy: 0 };
+    t.x = clamp01(spawnX + off.dx);
+    t.y = clamp01(spawnY + off.dy);
+  }
+}
+
+function tryApplyMapTransitionSpawn(fromMapId, toMapId){
+  if(!fromMapId || !toMapId) return false;
+  const entry = MAP_TRANSITION_SPAWNS?.[fromMapId]?.[toMapId];
+  if(!entry) return false;
+
+  applyPartySpawnWithFormation(entry.x, entry.y);
+  return true;
+}
     // -------------------------------
 // Explorer Events (data/events.json)
 // -------------------------------
@@ -2047,7 +2151,9 @@ btnSnapToggle.addEventListener("click", () => {
 
 
   function loadPresetMapById(mapId){
-  const preset = MAP_PRESETS.find(m => m.id === mapId);
+    const fromMapId = state.mapPresetId || null;
+      
+    const preset = MAP_PRESETS.find(m => m.id === mapId);
   if(!preset){
     alert("Preset map not found. Check MAP_PRESETS list in app.js.");
     return;
@@ -2061,6 +2167,8 @@ btnSnapToggle.addEventListener("click", () => {
 
   // Auto-set province for events
   state.travel.provinceId = mapIdToProvinceId(preset.id);
+  // NEW: if this map change matches a defined transition, spawn party accordingly
+  tryApplyMapTransitionSpawn(fromMapId, preset.id);
 
   saveNow();
   rerenderAll();
