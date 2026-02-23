@@ -3,7 +3,7 @@
     "the_east_isle": [
       { "id": "swyth", "label": "Swyth", "x": 0.5076, "y": 0.4578, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/swyth.png" },
       { "id": "greymyr", "label": "Greymyr", "x": 0.5424, "y": 0.1024, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "assets/submaps/greymyr.png" },
-      { "id": "port_brawdlyn", "label": "Port Brawdlyn", "x": 0.2276, "y": 0.8994, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
+      { "id": "port_brawdlyn", "label": "Port Brawdlyn", "x": 0.2662, "y": 0.8997, "description": "", "thumb": "assets/markers/marker_gold.png", "submapImage": "" }
     ],
 
     "the_north_isle": [
